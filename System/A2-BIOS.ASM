@@ -1,0 +1,332 @@
+;CPM-65 BIOS for Apple II
+
+;D. LAUSBERG	(C) 2023
+
+;V0.1	06.04.23	initial version
+
+
+VERSION	= $01		;VERSION NUMBER
+
+
+;PAGE 00 CELLS
+
+PREG	= $48		;Monitor status reg
+
+DMAV	= $FE		;DMA-VECTOR
+DIRBFV	= $FC		;DIRBF-VECTOR
+IOB	= $FA		;IOB-POINTER
+DPHV	= $F8		;DPH-VECTOR
+JPBDOS	= $F0
+
+;SYSTEM CONSTANTS
+
+RWTS	= $3D9		;RWTS entry point
+RWLS	= $3E3		;get IOB address in Y/A
+
+CCP	= $A800
+BEGIN	= $B600
+DMABF	= BEGIN-256	;default DMA buffer at $B500
+DIRBF	= DMABF-256	;dir sector buffer at $B400
+
+
+
+;APPLE I/O adresses
+
+KBD	= $C000		;Keyboard key, bit 7 =1
+KBDSTRB	= $C010		;Keyboard strobe
+
+;Apple ROM adresses
+
+RDKEY	= $FD0C
+COUT	= $FDED
+
+;--- RWTS commands ---
+
+SEEKC	= 0
+READC	= 1
+WRITEC	= 2
+FORMATC	= 3
+
+;--- IOB ---
+
+SLOT	= $01		;slot nr
+DRIVENR	= $02		;drive nr
+TRACK	= $04		;track nr
+SECTOR	= $05		;Sector nr
+DMA	= $08		;DMA vector
+BYTES	= $0B		;bytes to be R/W, 0=256 bytes
+COMMAND	= $0C		;command code
+RWTSERR	= $0D		;RWTS return code
+LVOL	= $0E		;last volume used
+LSLOT	= $0F		;last slot used
+LDRIVE	= $10		;last drive used
+
+
+;CONTROL CODES
+
+BREAKC	= $03		;BREAK CODE
+CLS	= $0C		;CLEAR SCREEN
+ESC	= $1B		;ESC
+
+;ERROR CODES
+
+NO_DEV	= $F4
+
+;CONSTANTS
+
+MAXTRK	= 35		;MAX TRACKS
+
+SPT	= 16		;SECTORS PER TRACK
+SPTDIV	= 4		;log(2) SPT
+SPB	= 4		;SECTORS PER BLOCK
+SPBDIV	= 2		;LOG(2) SPB
+SYS	= 32		;SYSTEM sectors
+BPD	= MAXTRK*SPT-SYS/SPB-1	;BLOCKS PER DISK
+DIRSCS	= 16		;DIRECTORY SECTORS
+DIRMSK	= %11111111	;DIR MASK FOR BAT
+RPEXT	= 8*SPB*2 	;RECORD PER EXTENT
+BATSIZ	= BPD/8		;SIZE OF BAT
+
+MAXTRY	= 10		;MAX TRIES ON ERROR
+
+;==========================================
+
+	ORG BEGIN
+
+FBIOS	JMP BOOT		; 00
+	JMP WBOOT		; 01
+	JMP CONST		; 02
+	JMP CONIN		; 03
+	JMP CONOUT		; 04
+	JMP NOFUNC		; 05
+	JMP NOFUNC		; 06
+	JMP NOFUNC		; 07
+	JMP HOME		; 08
+	JMP SELDSK		; 09
+	JMP NOFUNC		; 0A
+	JMP SETSEC		; 0B
+	JMP READ		; 0C
+	JMP WRITE		; 0D
+	JMP NOFUNC		; 0E
+	JMP GET_VERSION		; 0F
+
+;========== DATA AREA =============
+
+DPHA	DW DIRBF	;DISK PARAMETER HEADER
+	DW DMABF	;FOR DRIVE A to D
+	DW BAT
+
+	DB SPB-1	;DISK PARAMETER BLOCK FOR DISK A
+	DB SPBDIV
+	DW BPD
+	DB DIRSCS
+	DB DIRMSK
+	DB RPEXT
+	DB SYS,0,0
+	DB BATSIZ
+
+BAT	DB %10000000	;Block Allocation Table Drive A-D
+	DS BATSIZ+1	;17 Bytes
+
+;--- SLOT TABLE Floppy Drives ---
+
+SLOTTAB	DB 6*16, 5*16
+SECS	DS 3, $00
+DRIVE	DB 0
+
+;--- RWTS BIOS error table
+
+RWTSETAB DB $08, $10, $20, $40
+BIOSETAB DB $FA, $FC, $F9, $FF
+
+;--- BIOS data area ---
+
+YBUF	DB 0	;Y buffer for CHRIN & CHROUT
+CHARBUF	DB 0
+CHR	DB 0
+
+;==================================
+
+BOOT	LDA #$4C		;SET JMP BDOS
+	STA JPBDOS
+	LDA #CCP
+	STA JPBDOS+1
+	LDA #CCP/256
+	STA JPBDOS+2
+	JSR HOME		;HOME BOOT DISK, set IOB
+	LDA #0
+	STA DRIVE		;always A:
+	LDX #$0E		;VIA BDOS
+	JSR JPBDOS
+	LDX #0 			;WARM BOOT
+	JMP JPBDOS
+
+
+WBOOT	LDA DRIVE		;SELECT DEFAULT DRIVE
+	JMP SELDSK
+
+
+CONST	LDA CHARBUF		;0 IF NO KEY
+	RTS			;^C IF BREAK KEY DEPRESSED
+
+
+CONIN	STY YBUF	;CHR input; CHR in A, 8 bit transparent
+	LDA CHARBUF	;CTRL-C pressed?
+	BNE CONIN2
+	JSR RDKEY	;read key
+	AND #$7F	;clear bit 7
+CONIN2	LDY #0
+	STY CHARBUF
+	LDY YBUF
+	RTS
+
+
+CONOUT	STY YBUF	;PRINTS CHR in A TO CON, destroys Y
+	JSR COUT
+	BIT KBD         ;Check Keyboard Input Reg for a Key Press
+	BPL CHROU1      ;Branch if No Key has been Pressed
+        LDA KBD         ;Read Keyboard Input Reg; Get Key Pressed
+	BIT KBDSTRB     ;Clear KBD Strobe (KBD<128) for Next Key
+	CMP #ESC	;CHECK FOR ESC KEY
+	BNE CHROU1
+	LDA #BREAKC	;^C TO CHARACTER BUFFER
+	STA CHARBUF
+CHROU1	LDY YBUF
+	RTS
+
+
+HOME	JSR RWLS	;get IOB adr
+	STY IOB
+	STA IOB+1
+	LDY #COMMAND	;set seek command
+	LDA #SEEKC
+	STA (IOB),Y
+	LDY #TRACK
+	LDA #0
+	STA (IOB),Y
+	JSR RWTSEX	;RESTORE DRIVE
+	BCC HOMEX
+	JMP RWTSERROR
+
+HOMEX	RTS
+
+
+SELDSK	CMP #4			;TEST FOR DRIVE A to D
+	BCS SELDS3
+	STA DRIVE
+	LSR A
+	TAY
+	LDA SLOTTAB,Y		;set SLOT
+	LDY # SLOT
+	STA (IOB),Y
+	LDA DRIVE
+	AND #$01
+	LDY #DRIVENR		;SELECT DISK LOGICAL
+	STA (IOB),Y
+	LDA #DPHA		;SET DPHVEC
+	STA DPHV
+	LDA #DPHA/256
+	STA DPHV+1
+	CLC
+	RTS
+
+SELDS3	LDA #$F9		;ILLEGAL DRIVE NR
+	RTS
+
+
+SETSEC	TAX			;sector pointer for p.00 in Accu
+	LDA 0,X
+	STA SECS
+	LDA 1,X
+	STA SECS+1
+	LDA 2,X
+	STA SECS+2
+	RTS
+
+
+READ	JSR FD_ST		;convert sec nr to sector/track and setup for RWTS
+	BCS READX
+	LDY #COMMAND
+	LDA #READC
+	JSR RWTSEX		;READ SECTOR TO DMA
+	BCC READX
+	JMP RWTSERROR
+
+READX	RTS
+
+
+WRITE	JSR FD_ST		;convert sec nr to sector/track and setup for RWTS
+	BCS WRITEX
+	LDY #COMMAND
+	LDA #WRITEC
+	JSR RWTSEX		;READ SECTOR TO DMA
+	BCC WRITEX
+	JMP RWTSERROR
+
+WRITEX	RTS
+
+
+GET_VERSION			;GET VERSION NUMBER
+
+	LDA #VERSION
+	RTS
+
+
+;====== SUBROUTINES =======
+
+NOFUNC	LDA #NO_DEV		;BIOS function not available
+	SEC
+	RTS
+
+
+RWTSEX	JSR RWLS	;get IOB t Y/A
+	JSR RWTS	;do the call
+	LDA #0
+	STA PREG	;keep DOS happy
+	RTS
+
+
+FD_ST	LDA SECS	;set IOB with track, sector, volume, DMA
+	AND #SPT-1	;calc sector/track from sector nr
+	LDY #SECTOR	;always 2^n sectors/track
+	STA (IOB),Y
+	LDX #SPTDIV
+	LDA SECS+1
+FD_ST2	LSR A		;TRACK = SECS/16
+	ROR SECS
+	DEX
+	BNE FD_ST2
+	CMP #MAXTRK
+	BCS FD_ST1
+	DEY		;set track
+	STA (IOB),Y
+	DEY
+	LDA #0		;set volume = 0
+	STA (IOB),Y
+	LDY #DMA
+	LDA DMAV
+	STA (IOB),Y
+	INY
+	LDA DMAV+1
+	STA (IOB),Y
+	RTS
+
+FD_ST1	LDA #$FB		;sector not found error
+	RTS
+
+
+RWTSERROR			;convert RWTS error codes in CPM-65 error codes
+	LDY #RWTSERR
+	LDA (IOB),Y
+	LDY #3
+RWTSER1	CMP RWTSETAB,Y
+	BEQ RWTSER2
+	DEY
+	BPL RWTSER1
+	INY
+RWTSER2	LDA BIOSETAB,Y
+	SEC
+	RTS
+
+
+	END
