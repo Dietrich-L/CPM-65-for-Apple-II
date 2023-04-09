@@ -34,35 +34,26 @@ Software List
 Name		Version
 ALLOC		2.9
 ASM		2.6
-BASIC		1.5
-BDOS		2.3
-BIOS		3.1
-BOOT		1.7
-BOOTPROM	3.2
+BDOS		2.3*
+BIOS		0.1*
+BOOT		0.1*
 BROWSE		1.0
-CCP		1.5
+CCP		1.5*
 COPY		1.4
 D		2.0
-DATETIME	1.1
 DEBUG		1.7
-DRUCKER		1.0
 DUTIL		1.5
 EDIT		1.0
-EPROMMER	1.2
 ERASE		1.5
 FORMAT		2.4
 FORTH		1.6a
-HEXMON		1.1
-I2C-UTIL	1.3
 RENAME		1.1
-RFILE		1.1
-SCSIMGR		1.1
-STEP		1.0a
-SUPERTAP	1.4
 SYS 		1.5
 SYSGEN		1.0
 TYPE		1.6
 XMODEM		2.2
+
+*available
 
 All software is supplied as assembler files to be assembled with the CPM-65 assembler. In case you wish to use a different assembler, the syntax has to be adapted accordingly.
 
