@@ -1,0 +1,11 @@
+BOOT2ADR                         $08A4  BOOTCONT                         $08A3  
+BOOTM                            $0891  SECTAB                           $0881  
+BOOT4                            $0877  BOOT3                            $086A  
+BOOT7                            $0856  BOOT6                            $084D  
+BOOT5                            $084B  BOOT2                            $083D  
+BOOT1                            $0823  BOOT                             $0801  
+EOT                              $0000  LF                               $000A  
+CR                               $000D  TRACKNR                          $0041  
+SECRD                            $003E  SECNR                            $003D  
+SLOT16                           $002B  GBAS                             $0026  
+                   
