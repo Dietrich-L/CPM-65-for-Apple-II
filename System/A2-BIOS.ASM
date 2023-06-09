@@ -232,7 +232,10 @@ CONIN2	LDY #0
 
 
 CONOUT	STY YBUF	;PRINTS CHR in A TO CON
-	ORA #$80	;set bit 7
+	CMP #$60	;lower case to upper case
+	BCC CONOU2
+	AND #%01011111
+CONOU2	ORA #$80	;set bit 7
 	JSR COUT
 	BIT KBD_READ    ;Check Keyboard Input Reg for a Key Press
 	BPL CHROU1      ;Branch if No Key has been Pressed
