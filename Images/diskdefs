@@ -1,0 +1,133 @@
+# Apple II CPM-65 skew 0 Apple II DOS 3.3 skew
+diskdef A2-CPM-65
+  seclen 256
+# tracks 100 forces 16 bit blocknumbers
+  tracks 100
+  sectrk 16
+  blocksize 1024
+  maxdir 128
+#  skewtab 0,7,14,6,13,5,12,4,11,3,10,2,9,1,8,15
+  boottrk 2
+  os 2.2
+end
+
+# Apple II CP/M skew o Apple II DOS 3.3 skew
+diskdef apple-do
+  seclen 256
+  tracks 35
+  sectrk 16
+  blocksize 1024
+  maxdir 64
+  skewtab 0,6,12,3,9,15,14,5,11,2,8,7,13,4,10,1
+  boottrk 3
+  os 2.2
+end
+
+# Apple II CP/M skew o Apple II PRODOS skew
+diskdef apple-po
+  seclen 256
+  tracks 35
+  sectrk 16
+  blocksize 1024
+  maxdir 64
+  skewtab 0,9,3,12,6,15,1,10,4,13,7,8,2,11,5,14
+  boottrk 3
+  os 2.2
+end
+
+# Despite being Amstrad formats, CPC System and CPC Data don't have an Amstrad 
+# superblock. You'll need to use libdsk to access them because the Linux 
+# and Windows kernel drivers won't touch them.
+diskdef cpcsys22
+  seclen 512
+  tracks 40
+  sectrk 9
+  blocksize 1024
+  maxdir 64
+  skew 2
+#  skewtab 65,70,66,71,67,72,68,73,69
+  boottrk 2
+  os 2.2
+end
+
+diskdef cpcsys
+  seclen 512
+  tracks 40
+  sectrk 9
+  blocksize 1024
+  maxdir 64
+  skew 1
+  boottrk 2
+  os 3
+end
+diskdef cpcdata
+  seclen 512
+  tracks 40
+  sectrk 9
+  blocksize 1024
+  maxdir 64
+  skew 1
+  boottrk 0
+  os 3
+end
+
+
+diskdef ibm-8ss
+  seclen 512
+  tracks 40
+  sectrk 8
+  blocksize 1024
+  maxdir 64
+  skew 0
+  boottrk 1
+  os 2.2
+end
+
+diskdef ibm-8ds
+  seclen 512
+  tracks 40
+  sectrk 8
+  blocksize 1024
+  maxdir 64
+  skew 0
+  boottrk 1
+  os 2.2
+end
+
+
+# Robotron 1715
+diskdef 1715
+  seclen 1024
+  tracks 40
+  sectrk 5
+  blocksize 1024
+  maxdir 64
+  skew 0
+  boottrk 3
+  os 2.2
+end
+
+# Robotron 1715 with SCP3
+diskdef 1715-3
+  seclen 1024
+  tracks 160
+  sectrk 5
+  blocksize 2048
+  maxdir 128
+  skew 0
+  boottrk 4
+  os 3
+end
+
+
+
+diskdef JC
+  seclen 256
+  tracks 80
+  sectrk 16
+  blocksize 1024
+  maxdir 128
+  skew 0
+  boottrk 2
+  os 2.2
+end

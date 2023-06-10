@@ -1,10 +1,10 @@
-; CP/M-65 Copyright © 2023 David Given
-; This file is licensed under the terms of the 2-clause
-; BSD license. Please see the COPYING file in the root 
-; project directoryfor the full text
-
 ;CPM-65 version adapted 2023 by Dietrich Lausberg
 ;CPM-65 BIOS for Apple II
+
+; This BIOS makes heavy use of David Givens code for CP/M-65
+; CP/M-65 Copyright © 2023 David Given
+; This file is licensed under the terms of the 2-clause
+; BSD license
 
 ;D. LAUSBERG	(C) 2023
 ;V0.1	06.04.23	initial version
@@ -19,7 +19,7 @@ DMAV	= $FE		;DMA-VECTOR
 DIRBFV	= $FC		;DIRBF-VECTOR
 PTR	= $FA		;BIOS Pointer
 DPHV	= $F8		;DPH-VECTOR
-PTR1	= $E2		;temporary BIOS pointer
+PTR1	= $E4		;temporary BIOS pointer
 JPBDOS	= $F0
 
 
@@ -385,13 +385,14 @@ FD_ST	LDA SECS	;calculate SECS _> Track & Sector
 	ORA #track_buffer/256
 	sta wanted_trackoffset+1
 	lda #0
-	sta wanted_trackoffset+0 ;always full pages
+	sta wanted_trackoffset	;always full pages
 	LDX #SPTDIV
 	LDA SECS+1
 FD_ST2	LSR A			;TRACK = SECS/16
 	ROR SECS
 	DEX
 	BNE FD_ST2
+	LDA SECS
 	CMP #MAXTRK
 	BCS FD_ST1
 	sta wanted_track
@@ -406,15 +407,15 @@ FD_ST1	LDA #$FB		;sector not found error
 EREAD
 	jsr change_tracks
 	BCS EREADX
-        lda wanted_trackoffset+0
+        lda wanted_trackoffset
         sta PTR
         lda wanted_trackoffset+1
         sta ptr+1
-        ldy #255	;write 1 page
+        ldy #0		;copy 1 page to DMA
 READ1	lda (ptr),Y
 	sta (DMAV),Y
 	dey
-	BPL READ1
+	BNE READ1
         clc
 EREADX	rts
 
@@ -428,15 +429,15 @@ EWRITE
 	BCS EWRITX
         pha
 
-	lda wanted_trackoffset+0
+	lda wanted_trackoffset
         sta PTR
         lda wanted_trackoffset+1
         sta ptr+1
-        ldy #255	;write 1 page
+        ldy #0		;copy 1 page to track buffer
 WRIT1	lda (DMAV),Y
 	sta (ptr),Y
 	dey
-	BPL WRIT1
+	BNE WRIT1
         pla
 	BEQ WRIT2
 	jmp write_track
