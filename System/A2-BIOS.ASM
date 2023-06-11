@@ -8,8 +8,9 @@
 
 ;D. LAUSBERG	(C) 2023
 ;V0.1	06.04.23	initial version
+;V0.2	11.06.23	error corrections &CR/US
 
-VERSION	= $01		;VERSION NUMBER
+VERSION	= $02		;VERSION NUMBER
 
 ;PAGE 00 CELLS
 
@@ -39,12 +40,17 @@ KBD_STROBERESET	= $C010		;Keyboard strobe
 
 RDKEY	= $FD0C
 COUT	= $FDED
+SETVID	= $FE95
 
 ;CONTROL CODES
 
 BREAKC	= $03		;BREAK CODE
+TAB	= $09		;TAB
 CLS	= $0C		;CLEAR SCREEN
+CR	= $0D		;CR
 ESC	= $1B		;ESC
+US	= $1F		;cursor up
+SP	= $20		;space
 
 ;ERROR CODES
 
@@ -185,6 +191,8 @@ BOOT	JSR DISK_INIT
 	STA JPBDOS+1
 	LDA #CCP/256
 	STA JPBDOS+2
+	LDA #3
+	JSR SETVID		;set to 80 coloumn mode
 	JSR HOME		;HOME BOOT DISK, initialize disk driver
 	LDA #0
 	STA DRIVE		;always A:
@@ -236,7 +244,14 @@ CONOUT	STY YBUF	;PRINTS CHR in A TO CON
 	BCC CONOU2
 	AND #%01011111
 CONOU2	ORA #$80	;set bit 7
-	JSR COUT
+	CMP #TAB+$80
+	BNE CONOU4
+	LDA #SP+$80	;TAB --> SP
+CONOU4	CMP #CR+$80
+	BNE CONOU3
+	JSR COUT	;if CR then print CR & US
+	LDA #US+$80
+CONOU3	JSR COUT
 	BIT KBD_READ    ;Check Keyboard Input Reg for a Key Press
 	BPL CHROU1      ;Branch if No Key has been Pressed
         LDA KBD_READ    ;Read Keyboard Input Reg; Get Key Pressed

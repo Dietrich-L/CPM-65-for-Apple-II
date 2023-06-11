@@ -13,10 +13,14 @@ min 1 Floppy drive
 
 My system is a vanilla Apple II clone
 
+Emulation
+--------------------
+AppleWin emulator, APPLE IIe emulation due to the 80 col card
+
 System Structure
 --------------------
 CPM-65 consists of 3 layers:
-- BIOS Basic I/O system - Drives can be A-H non consecutive. 
+- BIOS Basic I/O system - Drives can be A-D non consecutive. 
 - BDOS Basic disc operating system - this is the CPM-65 kernal. Size 2 kB
 - CCP Console command program - a simple console which only allows to invoke CPM-65 programs. No resident commands. Size 1 kB
 
@@ -35,14 +39,14 @@ Name		Version
 ALLOC		2.9
 ASM		2.6
 BDOS		2.3*
-BIOS		0.1*
-BOOT		0.1*
-BROWSE		1.0
+BIOS		0.2*
+BOOT		0.2*
+BROWSE		1.0*
 CCP		1.5*
 COPY		1.4
-D		2.0
+D		2.0*
 DEBUG		1.7
-DUTIL		1.5
+DUTIL		1.5*
 EDIT		1.0
 ERASE		1.5
 FORMAT		2.4
