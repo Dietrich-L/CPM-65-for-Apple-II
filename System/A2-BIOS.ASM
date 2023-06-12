@@ -9,6 +9,7 @@
 ;D. LAUSBERG	(C) 2023
 ;V0.1	06.04.23	initial version
 ;V0.2	11.06.23	error corrections &CR/US
+;V0.3	12.06.23	Drives A - D support
 
 VERSION	= $02		;VERSION NUMBER
 
@@ -49,6 +50,7 @@ TAB	= $09		;TAB
 CLS	= $0C		;CLEAR SCREEN
 CR	= $0D		;CR
 ESC	= $1B		;ESC
+FS	= $1C		;cursor right
 US	= $1F		;cursor up
 SP	= $20		;space
 
@@ -246,7 +248,7 @@ CONOUT	STY YBUF	;PRINTS CHR in A TO CON
 CONOU2	ORA #$80	;set bit 7
 	CMP #TAB+$80
 	BNE CONOU4
-	LDA #SP+$80	;TAB --> SP
+	LDA #FS+$80	;TAB --> FS
 CONOU4	CMP #CR+$80
 	BNE CONOU3
 	JSR COUT	;if CR then print CR & US
@@ -264,7 +266,11 @@ CHROU1	LDY YBUF
 	RTS
 
 
-HOME	lda #0		;move to track 0
+HOME	LDA #$FF		;mark track buffer as invalid
+	STA buffered_track
+	LDA #MAXTRK+2*2		;assume head on track 37
+	STA current_phase	
+	lda #0			;move to track 0
 	jsr seek_to_track
 	CLC			;always ok
 HOMEX	RTS
@@ -284,7 +290,7 @@ SELDSK	CMP #4			;TEST FOR DRIVE A to D
 	STA DPHV
 	LDA #DPHA/256
 	STA DPHV+1
-	CLC
+	JSR HOME
 	RTS
 
 SELDS3	LDA #$F9		;ILLEGAL DRIVE NR
@@ -354,18 +360,18 @@ reject	inx
 	ldx #0
 	stx current_phase
 	stx buffer_dirty
-	dex
+	dex		;mark track buffer as invalid
 	stx buffered_track
 
     ; set Boot disk
 
 
-DSKIN1	LDA #0		;Slot#6, D0 is boot drive
+DSKIN1	LDA #0		;Slot#6, D1 is boot drive
 	JSR SELDSK 	;set Disk to current drive
 
     ; Read the BDOS & CCP from track 1 into the track buffer..
 
-RELOAD	lda #1
+	lda #1
 	jsr seek_to_track
 	jsr read_track
     
@@ -609,7 +615,9 @@ RTR11	JMP RTR2
 ; Seek to the track number in A.
 
 seek_to_track
+	PHA
 	jsr motor_on
+	PLA
 	asl a		; convert to phase number
 STT1	cmp current_phase
 	BNE STT2
@@ -633,7 +641,6 @@ change_phase
 	ora DISK_SLOT	; add in the slot offset
 	tax
 	sta DISK_PH0OFF,X  ; turn off current phase
-
 	tya
 	clc
 	adc current_phase
@@ -694,11 +701,15 @@ RGCR2	lda DISK_SHIFT,X
 
 
 
-motor_on			; Corrupts X
+motor_on			; Corrupts X, A
 	ldx #$ff
 	stx motor_countdown
-	ldx DISK_SLOT
-	sta DISK_MOTORON,X
+	LDA DISK_SLOT
+	ORA DRIVENR
+	TAX
+	STA DISK_DRIVE1,X	;select drive
+	LDX DISK_SLOT
+	sta DISK_MOTORON,X	;motor on
 	rts
 
 
