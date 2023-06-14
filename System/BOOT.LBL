@@ -1,16 +1,14 @@
-BOOT2ADR                         $0875  BOOTCONT                         $0874  
-BOOTM                            $085F  SECTAB                           $084F  
-BOOT5                            $084C  BOOT4                            $083F  
+BOOT2ADR                         $0883  BOOTCONT                         $0882  
+BOOTM                            $0864  SECTAB                           $0854  
+BOOT5                            $0851  BOOT4                            $0844  
 BOOT3                            $0834  BOOT1                            $081A  
 BOOT                             $0801  EOT                              $0000  
 LF                               $000A  CR                               $000D  
-COUT                             $FDED  RDKEY                            $FD0C  
-KBDSTRB                          $C010  KBD                              $C000  
-BIOS00                           $A700  TRACKNR                          $0041  
-SECRD                            $003E  SECNR                            $003D  
-SLOT16                           $002B  GBAS                             $0026  
-VERSION                          $0002    $A700  TRACKNR                          $0041  
-SECRD                         SA                               $0000  
-VERSION                          $0002    $003E  SECNR                            $003D  
-SLOT16                           $002B  GBAS                             $0026  
-TA                               $0002  
+SETVID                           $FE95  COUT                             $FDED  
+RDKEY                            $FD0C  KBDSTRB                          $C010  
+KBD                              $C000  BIOS00                           $A700  
+TRACKNR                          $0041  SECRD                            $003E  
+SECNR                            $003D  SLOT16                           $002B  
+GBAS                             $0026  VERSION                          $0002  
+$A700  
+TRACKNR                       

@@ -10,8 +10,9 @@
 ;V0.1	06.04.23	initial version
 ;V0.2	11.06.23	error corrections &CR/US
 ;V0.3	12.06.23	Drives A - D support
+;V0.4	13.06.23	error corrections writetrack
 
-VERSION	= $02		;VERSION NUMBER
+VERSION	= $04		;VERSION NUMBER
 
 ;PAGE 00 CELLS
 
@@ -19,9 +20,9 @@ PREG	= $48		;Monitor status reg
 
 DMAV	= $FE		;DMA-VECTOR
 DIRBFV	= $FC		;DIRBF-VECTOR
-PTR	= $FA		;BIOS Pointer
+PTR1	= $FA		;BIOS Pointer
 DPHV	= $F8		;DPH-VECTOR
-PTR1	= $E4		;temporary BIOS pointer
+PTR	= $E4		;temporary BIOS pointer
 JPBDOS	= $F0
 
 
@@ -164,16 +165,16 @@ DRIVENR DB 0
 motor_countdown DB 0
 current_phase	DB 0
 
-wanted_track	DB 1
+wanted_track	DB 0
 wanted_trackoffset DS 2
-buffered_track	DB 1
-buffer_dirty	DB 1
+buffered_track	DB $FF
+buffer_dirty	DB 0
 track_flags	DS 16
 
 sector_prologue		DB $ad, $aa, $d5 ; REVERSED
-sector_prologue_len = 2
+sector_prologue_len = 3
 sector_epilogue		DB $ff, $eb, $aa, $de ; REVERSED
-sector_epilogue_len = 3
+sector_epilogue_len = 4
 
 reverse_sector_map	DB $00,$07,$0E,$06,$0D,$05,$0C,$04
 			DB $0B,$03,$0A,$02,$09,$01,$08,$0F
@@ -193,8 +194,6 @@ BOOT	JSR DISK_INIT
 	STA JPBDOS+1
 	LDA #CCP/256
 	STA JPBDOS+2
-	LDA #3
-	JSR SETVID		;set to 80 coloumn mode
 	JSR HOME		;HOME BOOT DISK, initialize disk driver
 	LDA #0
 	STA DRIVE		;always A:
@@ -242,10 +241,7 @@ CONIN2	LDY #0
 
 
 CONOUT	STY YBUF	;PRINTS CHR in A TO CON
-	CMP #$60	;lower case to upper case
-	BCC CONOU2
-	AND #%01011111
-CONOU2	ORA #$80	;set bit 7
+	ORA #$80	;set bit 7
 	CMP #TAB+$80
 	BNE CONOU4
 	LDA #FS+$80	;TAB --> FS
@@ -278,7 +274,10 @@ HOMEX	RTS
 
 SELDSK	CMP #4			;TEST FOR DRIVE A to D
 	BCS SELDS3
-	STA DRIVE
+	LDY buffer_dirty
+	BEQ SELDS2
+        jsr write_track
+SELDS2	STA DRIVE
 	LSR A
 	TAY
 	LDA SLOTTAB,Y		;set SLOT
@@ -290,7 +289,12 @@ SELDSK	CMP #4			;TEST FOR DRIVE A to D
 	STA DPHV
 	LDA #DPHA/256
 	STA DPHV+1
-	JSR HOME
+;	CMP DRIVE		;if drive is new then HOME
+;	BEQ SELDS1
+;	JSR HOME
+	RTS
+
+SELDS1	CLC
 	RTS
 
 SELDS3	LDA #$F9		;ILLEGAL DRIVE NR
@@ -315,6 +319,7 @@ READX	RTS
 
 WRITE	JSR FD_ST		;convert sec nr to sector/track
 	BCS WRITEX
+	LDA #0			;do normal write
 	JSR EWRITE
 WRITEX	RTS
 
@@ -402,6 +407,7 @@ MOVE2	lda (ptr1),Y
 
 
 FD_ST	LDA SECS	;calculate SECS _> Track & Sector
+	STA wanted_track
 	AND #SPT-1	;sector offset
 	ORA #track_buffer/256
 	sta wanted_trackoffset+1
@@ -410,16 +416,12 @@ FD_ST	LDA SECS	;calculate SECS _> Track & Sector
 	LDX #SPTDIV
 	LDA SECS+1
 FD_ST2	LSR A			;TRACK = SECS/16
-	ROR SECS
+	ROR wanted_track
 	DEX
 	BNE FD_ST2
-	LDA SECS
-	CMP #MAXTRK
-	BCS FD_ST1
-	sta wanted_track
-	rts
-
-FD_ST1	LDA #$FB		;sector not found error
+	LDA wanted_track
+	CMP #MAXTRK		;check for last track on disc
+	LDA #$FB		;if C=1 sector not found error
 	RTS
 
 
@@ -461,7 +463,8 @@ WRIT1	lda (DMAV),Y
 	BNE WRIT1
         pla
 	BEQ WRIT2
-	jmp write_track
+	jmp write_track	;write track immediately
+
 WRIT2	lda #1
         sta buffer_dirty
         clc
@@ -664,7 +667,7 @@ STT5	sbc #1
 	rts
 
 ; Waits for a sector header. Returns the unencoded ID byte
-; immediately following in Y. Preserves A
+; immediately following in Y. Preserves A. X = DISK_SLOT
 
 read_header
 	ldx DISK_SLOT
@@ -719,8 +722,7 @@ motor_on			; Corrupts X, A
 ; be the last routine in the BIOS so all the
 ; timing-critical bits are in the last page.
 
-MEM
-	DS MEM/256+1*256-MEM,$FF		;page alignment
+ALIGN	DS $40,0	;alignment for writetrack
 
 write_track
     jsr motor_on
@@ -743,9 +745,9 @@ write_track
     sta PTR1          ; remains zero for the duration
 
 write_track1
-        lda ptr1+1
-        and #$0f
-        tax		;X is sector#
+;        lda ptr1+1
+;        and #$0f
+;        tax		;X is sector#
 
         ; Precompute the 2s and I/O buffer.
 
@@ -801,6 +803,7 @@ WTRK3	jsr read_header
 WTRK4	CMP 0           ; 3
 	dey             ; 2
 	BNE WTRK4	; 3 for every iteration
+;	cmp (0,X) 	; 6 16th round - 2us
             
         ldx DISK_SLOT
         lda DISK_LOAD,X    ; prime drive
@@ -825,14 +828,14 @@ WTRK6	cmp (0,X) ; 6
 	cmp (0,X) ; 6		; 12
 	cmp (0,X) ; 6
 	cmp (0,X) ; 6 		; 12
-	NOP			; 3
-	sta DISK_LOAD,X	; 5
+	NOP			; 2
+	sta DISK_LOAD,X		; 5
 	cmp DISK_SHIFT,X	; 4
 	dey			; 2
 	BNE WTRK6		; 3 if taken, 2 if not
 
 	PHA		; waste four cycles for the last 40-cycle sync byte
-	PLA		; plus five to sync up with the loop below
+	PLA		; plus five to sync up with the loop below = 9
 	NOP
 
             ; Write prologue. (From here on we're at 32-cycles)
@@ -854,24 +857,23 @@ WTRK7	cmp (0,X) ; 6
 
 	tya			; 2
 	ldy #$56		; 2
-WTRK8	eor disk_twos_buffer-1,Y ; 5 (always crosses page boundary)
+WTRK8	eor disk_twos_buffer-1,Y ; 4 (does not cross page boundary)
 	tax			; 2
 	lda encode_tab,X	; 4
-	ldx DISK_SLOT		; 2
+	ldx DISK_SLOT		; 4
 	sta DISK_LOAD,X		; 5
 	cmp DISK_SHIFT,X	; 4
-	lda disk_twos_buffer-1,Y ; 5 (always crosses page boundary)
+	lda disk_twos_buffer-1,Y ; 4 (does not cross page boundary)
 	dey			; 2
 	BNE WTRK8		; 3 if taken, 2 is not
 
-            ; Write out the 6s buffer
-            ; (y is zero)
+		; Write out the 6s buffer
+		;(y is zero)
 
-WTRK9	NOP                     ; 2
-	eor disk_sixes_buffer,Y	; 4
+WTRK9	eor disk_sixes_buffer,Y	; 4
 	tax			; 2
 	lda encode_tab,X	; 4
-	ldx DISK_SLOT		; 2
+	ldx DISK_SLOT		; 4
 	sta DISK_LOAD,X		; 5
 	ora DISK_SHIFT,X	; 4
 	lda disk_sixes_buffer,Y	; 4
@@ -882,9 +884,9 @@ WTRK9	NOP                     ; 2
 
 	tax			; 2
 	lda encode_tab,X	; 4
-	PHA
-	PLA 			; 7
-	ldx DISK_SLOT		; 2
+	CMP 0
+	NOP 			; 5
+	ldx DISK_SLOT		; 4
 	sta DISK_LOAD,X		; 5
 	ora DISK_SHIFT,X 	; 4
 
@@ -897,8 +899,7 @@ WTRK9	NOP                     ; 2
 	ldy #sector_epilogue_len ; 2
 
 WTRK10	lda sector_epilogue-1,Y	; 4
-	NOP			; 2
-	ldx DISK_SLOT		; 2
+	ldx DISK_SLOT		; 4
 	sta DISK_LOAD,X		; 5
 	ora DISK_SHIFT,X	; 4
 	PHA
@@ -928,14 +929,14 @@ WTRK_L	JMP write_track1
 
 
 
-; DPH for drive 0 (our only drive)
-
+MEM
+	DS MEM/256+1*256-MEM,$FF	;page alignment
+			DB 0		;dummy byte
 disk_twos_buffer	DS 86,$55 ; must be aligned
 encode_tab		DS 64,$AA ; must be within one page
-
-directory_buffer	DS 256,$00
 decode_tab		DS $100-DECODE_TABLE_START,$FF
 
+directory_buffer	DS 256,$00
 
 	END
 

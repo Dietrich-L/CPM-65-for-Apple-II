@@ -26,6 +26,7 @@ KBDSTRB	= $C010		;Keyboard strobe
 
 RDKEY	= $FD0C
 COUT	= $FDED
+SETVID	= $FE95
 
 ;control codes
 
@@ -66,6 +67,8 @@ BOOT1     LDX BOOT2ADR+1
 BOOT3	JSR $FE89		;set normal text
         JSR $FE93		;set video
         JSR $FB2F		;init text screen
+	LDA #3
+	JSR SETVID		;set to 80 coloumn mode
 	LDY #0
 BOOT4	LDA BOOTM,Y		;Print Boot message
 	BEQ BOOT5
@@ -80,7 +83,8 @@ BOOT5	JMP BIOS00
 SECTAB	DB $00,$0D,$0B,$09,$07,$05,$03,$01,$0E	;sector table
 	DB $0C,$0A,$08,$06,$04,$02,$0F
 
-BOOTM	DB 'CPM-65 BOOT V',VERSION/16+$30,'.',VERSION*$1000/$1000+$30,CR,LF,CR,LF,EOT
+BOOTM	DB '  CPM-65 APPLE II BOOT V'
+	DB VERSION/16+$30,'.',VERSION*$1000/$1000+$30,CR,LF,EOT
 
 
 BOOTCONT	DB $00
