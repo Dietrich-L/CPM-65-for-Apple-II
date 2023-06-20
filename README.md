@@ -9,7 +9,7 @@
 Dietrich Lausberg &lt;lausbergd@gmail.com&gt;
 https://github.com/dietrich-l
 
-This repository contains the Apple II Port of CPM-65, a CP/M-80 analogue operating system for 6502 based microcomputers
+This repository contains the Apple II Port of CPM-65, <br>a CP/M-80 analogue operating system for 6502 based microcomputers
 
 
 ![CPM-65 Apple II Version](https://github.com/Dietrich-L/CPM-65-for-Apple-II/assets/83355183/589a5ae8-6ea3-4187-b9b1-4422a80b5264)
@@ -32,7 +32,7 @@ System Structure
 CPM-65 consists of 3 layers:
 - BIOS Basic I/O system - Drives can be A-D non consecutive. 
 - BDOS Basic disc operating system - this is the CPM-65 kernal. Size 2 kB
-- CCP Console command program - a simple console which only allows to invoke CPM-65 programs. No resident commands. Size 1 kB
+- CCP Console command program - a simple console which only allows to invoke CPM-65 programs. <br>      No resident commands. Size 1 kB
 
 File &amp; Disc Format
 ----------------------
@@ -41,7 +41,7 @@ Programs must have .COM as extension and are loaded to $0800 and started there.
 
 The directory structure is CP/M-compatible. Disk images can be read with appropriate  tools like CPMTOOLS
 
-The Disc format is 35 tracks/ 16 sectors/ 256 byte/sector. It is defined in the BIOS. The BDOS operates on sector numbers. 
+The Disc format is 35 tracks/ 16 sectors/ 256 byte/sector. <br>It is defined in the BIOS. The BDOS operates on sector numbers. 
 
 Software List
 </pre>
@@ -231,11 +231,11 @@ Software List
     </table>
     <pre>*available
 
-All software is supplied as assembler files to be assembled with the CPM-65 assembler. In case you wish to use a different assembler, the syntax has to be adapted accordingly.
+All software is supplied as assembler files to be assembled with the CPM-65 assembler. <br>In case you wish to use a different assembler, the syntax has to be adapted accordingly.
 
 Documentation
 --------------------
-Currently the documentation of CPM-65 is sparse and only for my personal needs. I plan to write appropriate docs over time. If there are any whishes, please open a DISCUSSION
+Currently the documentation of CPM-65 is sparse and only for my personal needs. <br>I plan to write appropriate docs over time. If there are any whishes, please open a DISCUSSION
 
 Errors
 --------------------
@@ -247,7 +247,7 @@ However, since an error free software does not exist, please report any errors i
 
 Other related systems
 ---------------------
-When I started the development of cpm-65, I was blissfully unaware of any other aproaches. However there are some, most notably:
+When I started the development of cpm-65, I was blissfully unaware of any other aproaches. <br>However there are some, most notably:
 - DOS/65 by Richard Leary. There is a limited compatibility
 - OUP/M  by Jiang - Xiong Shao. Published 1983, no further development
 - CPM65 by David Given, published 2022
