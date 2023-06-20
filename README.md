@@ -1,8 +1,7 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=windows-1252">
-    <link rel="alternate stylesheet" type="text/css" href="resource://gre-resources/plaintext.css"
-      title="Lange Zeilen umbrechen">
+    <link rel="alternate stylesheet" type="text/css" href="resource://gre-resources/plaintext.css">
   </head>
   <body>
     <pre>CPM-65 APPLE II Port
