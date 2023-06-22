@@ -11,7 +11,7 @@ https://github.com/dietrich-l
 
 This repository contains the Apple II Port of CPM-65, <br>a CP/M-80 analogue operating system for 6502 based microcomputers
 
-<br>![Apple II-2](https://github.com/Dietrich-L/CPM-65-for-Apple-II/assets/83355183/3609b98e-b4e8-4d7b-a205-e5b7910f0089)
+<br>![Apple II-1](https://github.com/Dietrich-L/CPM-65-for-Apple-II/assets/83355183/69f918c0-867b-46d7-949a-3b9a66f1ed95)
 
 
 System Requirements
