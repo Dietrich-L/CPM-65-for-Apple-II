@@ -26,7 +26,7 @@ Emulation
 --------------------
 AppleWin emulator, APPLE IIe emulation due to the 80 col card
 
-<br>![CPM-65 Apple II Version](https://github.com/Dietrich-L/CPM-65-for-Apple-II/assets/83355183/589a5ae8-6ea3-4187-b9b1-4422a80b5264)<br>
+<br>![CPM-65 Apple II Version](https://github.com/Dietrich-L/CPM-65-for-Apple-II/assets/83355183/92115ec1-b5ee-4b9e-b3e1-6360515362c6)<br>
 &nbsp;System Structure
 --------------------
 CPM-65 consists of 3 layers:
@@ -258,6 +258,5 @@ Redistribution
 Source code, and all documents, are freely redistributable in
 any form. Please see the the COPYRIGHT file included in this
 Repository.</pre>
-    
   </body>
 </html>
