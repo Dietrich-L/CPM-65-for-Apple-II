@@ -11,8 +11,7 @@ https://github.com/dietrich-l
 
 This repository contains the Apple II Port of CPM-65, <br>a CP/M-80 analogue operating system for 6502 based microcomputers
 
-
-![CPM-65 Apple II Version](https://github.com/Dietrich-L/CPM-65-for-Apple-II/assets/83355183/589a5ae8-6ea3-4187-b9b1-4422a80b5264)
+<br>![Apple II-2](https://github.com/Dietrich-L/CPM-65-for-Apple-II/assets/83355183/3609b98e-b4e8-4d7b-a205-e5b7910f0089)
 
 
 System Requirements
@@ -25,9 +24,7 @@ My system is a vanilla Apple II clone
 
 Emulation
 --------------------
-AppleWin emulator, APPLE IIe emulation due to the 80 col card
-
-System Structure
+AppleWin emulator, APPLE IIe emulation due to the 80 col card<br><br>![CPM-65 Apple II Version](https://github.com/Dietrich-L/CPM-65-for-Apple-II/assets/83355183/589a5ae8-6ea3-4187-b9b1-4422a80b5264)<br><br>&nbsp;System Structure
 --------------------
 CPM-65 consists of 3 layers:
 - BIOS Basic I/O system - Drives can be A-D non consecutive. 
