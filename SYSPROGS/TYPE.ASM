@@ -8,7 +8,8 @@
 ;	V1.4	26.11.97	EOT on $00
 ;	V1.5	30.04.21	4 Floppies
 ;	V1.6	22.03.22	/P option
-Version	= $16
+;	V1.7	22.06.23	minor corrections
+Version	= $17
 
 ;CONSTANTS
 
@@ -33,7 +34,7 @@ TPA     = $0800
 DMA     = $FE
 FCB1    = $F6
 BDOS    = $F0
-CCPV    = $DE
+CCPV    = $E0
 
 POINTER = 0		;BUFFER POINTER
 ERRNO   = 1
