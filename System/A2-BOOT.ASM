@@ -4,8 +4,9 @@
 ;V0.2	13.05.23	2nd try
 ;V0.3	19.06.23	Load CCP & BDOS via BIOS
 ;V0.4	20.06.23	CCP at $A800
+;V0.5	23.06.23	BOOT drive detection
 
-VERSION	= $04
+VERSION	= $05
 
 ;--- Page 00 adresses
 
@@ -63,8 +64,10 @@ BOOT	LDA GBAS+1
 	LSR A
 	LSR A
 	LSR A
+	STA PTR+1		;save slot #
 	ORA #$C0
-	STA SECRD+1	;set ROM sec read routine	LDA #$5C
+	STA SECRD+1	;set ROM sec read routine
+	LDA #$5C
 	STA SECRD
 BOOT1	LDX BOOT2ADR+1
 	CMP #BIOS00/256-1	;last BIOS sector loaded?
@@ -102,7 +105,12 @@ DISK_INIT		;init disk driver
     ; set Boot disk
 
 
-DSKIN1	LDA #0		;Slot#6, D1 is boot drive A:
+DSKIN1	LDA PTR+1		;set boot drive
+	LDY #0		;default boot drive is A:
+	CMP #5
+	BNE DSKIN2	;if slot#=5 then boot from C:
+	LDY #2
+DSKIN2	TYA
 	JSR SELDSK 	;set Disk to current drive
 	JSR HOME	;and home it
 
