@@ -1,12 +1,12 @@
 # Apple II CPM-65 skew 0 Apple II DOS 3.3 skew
-diskdef A2-CPM-65
+diskdef A2-CPM-65-70
   seclen 256
-# tracks 100 forces 16 bit blocknumbers
-  tracks 100
+# tracks 70 forces 16 bit blocknumbers
+# max file length allowed 8 kB
+  tracks 70
   sectrk 16
   blocksize 1024
   maxdir 128
-#  skewtab 0,7,14,6,13,5,12,4,11,3,10,2,9,1,8,15
   boottrk 2
   os 2.2
 end

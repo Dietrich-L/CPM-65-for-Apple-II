@@ -39,7 +39,7 @@ File &amp; Disc Format
 Filenames are CP/M-style d:filename.ext with d &lt;Drive A-H&gt;
 Programs must have .COM as extension and are loaded to $0800 and started there.
 
-The directory structure is CP/M-compatible. Disk images can be read with appropriate  tools like CPMTOOLS
+The directory structure is nearly CP/M-compatible. Disk images can be read with appropriate  tools <br>like CPMTOOLS or CpmtoolsGUI. A disdefs file is in the IMAGES section. However due to an inconsistency <br>in the file system implementation of these tools max. 8 kB files can be written this way. <br>For the transfer of larger files, see separate documentation.
 
 The Disc format is 35 tracks/ 16 sectors/ 256 byte/sector. <br>It is defined in the BIOS. The BDOS operates on sector numbers. 
 
@@ -67,9 +67,10 @@ Software List
         <tr>
           <td><span style="font-family: Courier New,Courier,monospace;">ASM<br>
             </span></td>
-          <td><span style="font-family: Courier New,Courier,monospace;"><br>
+          <td><span style="font-family: Courier New,Courier,monospace;">2.7*<br>
             </span></td>
-          <td><span style="font-family: Courier New,Courier,monospace;"><br>
+          <td><span style="font-family: Courier New,Courier,monospace;">native
+              6502 Assembler<br>
             </span></td>
         </tr>
         <tr>
@@ -196,9 +197,10 @@ Software List
         <tr>
           <td><span style="font-family: Courier New,Courier,monospace;">SYS<br>
             </span></td>
-          <td><span style="font-family: Courier New,Courier,monospace;"><br>
+          <td><span style="font-family: Courier New,Courier,monospace;">1.6*<br>
             </span></td>
-          <td><span style="font-family: Courier New,Courier,monospace;"><br>
+          <td><span style="font-family: Courier New,Courier,monospace;">puts
+              code for BOOT, BIOS, BDOS, CCP into the system tracks<br>
             </span></td>
         </tr>
         <tr>
