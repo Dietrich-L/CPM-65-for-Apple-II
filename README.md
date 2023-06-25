@@ -178,9 +178,10 @@ Software List
         <tr>
           <td><span style="font-family: Courier New,Courier,monospace;">FORTH<br>
             </span></td>
-          <td><span style="font-family: Courier New,Courier,monospace;"><br>
+          <td><span style="font-family: Courier New,Courier,monospace;">1.6*<br>
             </span></td>
-          <td><span style="font-family: Courier New,Courier,monospace;"><br>
+          <td><span style="font-family: Courier New,Courier,monospace;">FIG
+              FORTH including mudule for standalone applications<br>
             </span></td>
         </tr>
         <tr>
