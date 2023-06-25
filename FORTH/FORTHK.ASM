@@ -1,0 +1,495 @@
+;fig-FORTH   Apple II Version
+;by D. Lausberg    (c) 1990
+;V1.0	7.1.90
+;V1.1  21.1.95		some improvements, debug code removed
+;V1.2  20.02.95		RAM-disk version, BDOS
+;V1.3  15.04.96		PRINTER
+;V1.4  26.04.96		ENCLOSE fixed, upper case (FIND)
+;V1.5  08.05.21		PRTCHR masks bit7 (AND $7F)
+;V1.6  17.05.21		SCR# 3, ?STACK UM* U/ U< R/W errors, U* faster algo
+;			stx xsave in XQTER eliminated
+;V1.0	16.07.21	FKernel Version eliminated: MON, VLIST..LIST
+Version = $10
+
+;--- CONSTANTS ---
+BS	= $08			;backspace
+SSIZE	= 256
+NSEC	= 16
+NBUF	= 4
+BMAG	= SSIZE+4*NBUF
+
+;--- System Addresses
+BOS	= $10
+TOS	= $C0
+N	= TOS+8
+IP	= N+8
+W	= IP+3
+UP	= W+2
+XSAVE	= UP+2
+
+INBUFV	= $EC
+BDOSJP	= $F0
+DMA	= $FE
+
+TIBX	= $100
+ORIG	= $800
+MEM	= $8000
+UAREA	= MEM-128
+DAREA	= UAREA-BMAG
+LOWMEM	= MEM			;ramdisc
+HIMEM	= $A7FF			;screen #3 .. #12
+
+;--- BDOS Commands ---
+BD_PRT	= $05
+
+
+	ORG ORIG
+
+ENTER	NOP
+	JMP COLD+2
+REENTR	NOP
+	JMP WARM
+	DW $0004,$5ED2,NTOP,BS
+	DW UAREA,TOS,$1FF,TIBX,31
+	DW 0			;0=no disk  1=disk warnings
+	DW TOP,TOP,VLO
+
+
+L22	DB $83,'LI',$D4
+	DW 0
+LIT	DW LIT+2
+	LDA (IP),Y
+	PHA
+	INC IP
+	BNE L30
+	INC IP+1
+L30	LDA (IP),Y
+L31	INC IP
+	BNE PUSH
+	INC IP+1
+
+PUSH	DEX
+	DEX
+
+PUT	STA 1,X
+	PLA
+	STA 0,X
+
+NEXT	LDY #1			;NEXT
+	LDA (IP),Y
+	STA W+1
+	DEY
+	LDA (IP),Y
+	STA W
+	CLC
+	LDA IP
+	ADC #2
+	STA IP
+	BCC L54
+	INC IP+1
+L54	JMP W-1
+
+
+L35	DB $84,'CLI',$D4	;CLIT
+	DW L22
+CLIT	DW CLIT+2
+	LDA (IP),Y
+	PHA
+	TYA
+	BEQ L31
+
+
+SETUP	ASL A			;put A args from TOS to N
+	STA N-1
+L63	LDA 0,X			;
+	STA N,Y
+	INX
+	INY
+	CPY N-1
+	BNE L63
+	LDY #0
+	RTS
+
+
+L75	DB $87,'EXECUT',$C5	;EXECUTE
+	DW L35
+EXEC	DW EXEC+2
+	LDA 0,X
+	STA W
+	LDA 1,X
+	STA W+1
+	INX
+	INX
+	JMP W-1
+
+
+L89	DB $86,'BRANC',$C8	;BRANCH
+	DW L75
+BRAN	DW BRAN+2
+	CLC
+	LDA (IP),Y
+	ADC IP
+	PHA
+	INY
+	LDA (IP),Y
+	ADC IP+1
+	STA IP+1
+	PLA
+	STA IP
+	JMP NEXT+2
+
+
+L107	DB $87,'0BRANC',$C8	;0BRANCH
+	DW L89
+ZBRAN	DW ZBRAN+2
+	INX
+	INX
+	LDA $FE,X
+	ORA $FF,X
+	BEQ BRAN+2
+
+BUMP	CLC
+	LDA IP
+	ADC #2
+	STA IP
+	BCC L122
+	INC IP+1
+L122	JMP NEXT
+
+
+L127	DB $86,'(LOOP',$A9	;(LOOP)
+	DW L107
+PLOOP	DW PLOOP+2
+	STX XSAVE
+	TSX
+	INC $101,X
+	BNE PL1
+	INC $102,X
+
+PL1	CLC
+	LDA $103,X
+	SBC $101,X
+	LDA $104,X
+	SBC $102,X
+
+PL2	LDX XSAVE
+	ASL A
+	BCC BRAN+2
+	PLA
+	PLA
+	PLA
+	PLA
+	JMP BUMP
+
+
+L154	DB $87,'(+LOOP',$A9
+	DW L127
+PPLOO	DW PPLOO+2
+	INX
+	INX
+	STX XSAVE
+	LDA $FF,X
+	PHA
+	PHA
+	LDA $FE,X
+	TSX
+	INX
+	INX
+	CLC
+	ADC $101,X
+	STA $101,X
+	PLA
+	ADC $102,X
+	STA $102,X
+	PLA
+	BPL PL1
+	CLC
+	LDA $101,X
+	SBC $103,X
+	LDA $102,X
+	SBC $104,X
+	JMP PL2
+
+
+L185	DB $84,'(DO',$A9	;(DO)
+	DW L154
+PDO	DW PDO+2
+	LDA 3,X
+	PHA
+	LDA 2,X
+	PHA
+	LDA 1,X
+	PHA
+	LDA 0,X
+	PHA
+POPTWO	INX
+	INX
+POP	INX
+	INX
+	JMP NEXT
+
+
+L207	DB $81,$C9
+	DW L185
+I	DW R+2
+
+
+L214	DB $85,'DIGI',$D4
+	DW L207
+DIGIT	DW DIGIT+2
+	SEC
+	LDA 2,X
+	SBC #$30
+	BMI L234
+	CMP #$A
+	BMI L227
+	SEC
+	SBC #7
+	CMP #$A
+	BMI L234
+L227	CMP 0,X
+	BPL L234
+	STA 2,X
+	LDA #1
+	PHA
+	TYA
+	JMP PUT
+
+L234	TYA
+	PHA
+	INX
+	INX
+	JMP PUT
+
+
+L243	DB $86,'(FIND',$A9
+	DW L214
+PFIND	DW PFIND+2
+	LDA #2
+	JSR SETUP
+	STX XSAVE
+L249	LDY #0
+	LDA (N),Y
+	EOR (N+2),Y
+	AND #$3F
+	BNE L281
+L254	INY
+	LDA (N+2),Y
+	CMP #'a
+	BCC L255
+	CMP #'{
+	BCS L255
+	AND #$5F		;lower -> upper case
+L255	EOR (N),Y
+	ASL A
+	BNE L280
+	BCC L254
+	LDX XSAVE
+	DEX
+	DEX
+	DEX
+	DEX
+	CLC
+	TYA
+	ADC #5
+	ADC N
+	STA 2,X
+	LDY #0
+	TYA
+	ADC N+1
+	STA 3,X
+	STY 1,X
+	LDA (N),Y
+	STA 0,X
+	LDA #1
+	PHA
+	JMP PUSH
+L280	BCS L284
+L281	INY
+	LDA (N),Y
+	BPL L281
+L284	INY
+	LDA (N),Y
+	TAX
+	INY
+	LDA (N),Y
+	STA N+1
+	STX N
+	ORA N
+	BNE L249
+	LDX XSAVE
+	LDA #0
+	PHA
+	JMP PUSH
+
+	;DS 2
+
+L301	DB $87,'ENCLOS',$C5	;enclose adr1 c --> adr1 n1 n2 n3
+	DW L243
+ENCL	DW ENCL+2
+	LDA #2
+	JSR SETUP		; 2 args from Stack to N
+	TXA
+	SEC
+	SBC #8			;make room for 4 args
+	TAX
+	STY 3,X			;HiBytes n2,n3=0 n1 is 0
+	STY 1,X
+	BCS L314		;branch always
+
+L313	INY			;skip 1. delimiter 
+	BNE L314
+	INC 5,X			;inc hibytes due to rollover
+	INC 3,X
+	INC 1,X
+	INC N+3
+L314	LDA (N+2),Y		;load CHR from adr1
+	CMP N			;= c ?
+	BEQ L313
+L317	STY 4,X			; n2
+L318	LDA (N+2),Y
+	BNE L327
+	STY 2,X			;$00 is absolute delimiter
+	STY 0,X
+	TYA
+	CMP 4,X
+	BNE L326
+	INC 2,X
+L326	JMP NEXT
+
+L327	STY 2,X			;1. non c
+	INY
+	BNE L328
+	INC 3,X			;inc hibytes
+	INC 1,X
+	INC N+3
+L328	CMP N			;check for 2.delimiter
+	BNE L318
+	STY 0,X
+	JMP NEXT
+
+
+L337	DB $84,'EMI',$D4
+	DW L301
+EMIT	DW XEMIT
+
+
+L344	DB $83,'KE',$D9
+	DW L337
+KEY	DW XKEY
+
+
+L351	DB $89,'?TERMINA',$CC
+	DW L344
+QTERM	DW XQTER
+
+
+L358	DB $82,'C',$D2
+	DW L351
+CR	DW XCR
+
+
+L365	DB $85,'CMOV',$C5
+	DW L358
+CMOVE	DW CMOVE+2
+	LDA #3
+	JSR SETUP
+L370	CPY N
+	BNE L375
+	DEC N+1
+	BPL L375
+	JMP NEXT
+L375	LDA (N+4),Y
+	STA (N+2),Y
+	INY
+	BNE L370
+	INC N+5
+	INC N+3
+	JMP L370
+
+
+L386	DB $82,'U',$AA	;U*
+	DW L365
+USTAR	DW USTAR+2
+	TYA
+	STA N
+	LDY #16
+	LSR 3,X
+	ROR 2,X
+L396	BCC L411
+	CLC
+	PHA
+	LDA N
+	ADC 0,X
+ 	STA N
+	PLA
+	ADC 1,X
+L411	ROR A
+	ROR N
+	ROR 3,X
+	ROR 2,X
+	DEY
+	BNE L396
+	STA 1,X
+	LDA N
+	STA 0,X
+	JMP NEXT
+
+
+L418	DB $82,'U',$AF	;U/
+	DW L386
+USLAS	DW USLAS+2
+	LDA 4,X
+	LDY 2,X
+	STY 4,X
+	ASL A
+	STA 2,X
+	LDA 5,X
+	LDY 3,X
+	STY 5,X
+	ROL A
+	STA 3,X
+	LDA #16
+	STA N
+L433	ROL 4,X
+	ROL 5,X
+	LDA 4,X
+	BCS L446
+	SEC
+	SBC 0,X
+	TAY
+	LDA 5,X
+	SBC 1,X
+	BCC L444
+	STY 4,X
+L442	STA 5,X
+L444	ROL 2,X
+	ROL 3,X
+	DEC N
+	BNE L433
+	JMP POP
+
+L446	SBC 0,X
+	STA 4,X
+	LDA 5,X
+	SBC 1,X
+	SEC
+	BCS L442
+
+	;DS 4, $00		;alignment to avoid JMP($xxFF)
+
+L453	DB $83,'AN',$C4
+	DW L418
+ANDD	DW ANDD+2
+	LDA 0,X
+	AND 2,X
+	PHA
+	LDA 1,X
+	AND 3,X
+
+BINARY	INX
+	INX
+	JMP PUT
+
+	APP FORTHK1.APP
+
