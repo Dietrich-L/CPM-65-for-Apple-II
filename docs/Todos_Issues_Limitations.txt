@@ -1,15 +1,16 @@
 ToDo's, Issues & Limitations
 
 ToDo's
-migrate programs ASM, BASIC, FORTH, SYS, FORMAT
+migrate programs BASIC, FORMAT
 
 Issues
 does not check for 80 coloumn card. If not present, system hangs
 Empty discs must be DOS3.3 formatted
+Keyboard input from RDKEY supresses some ASCII codes like ESC, CTRL-A,..
 
 
 Limitations
 max. 48kB RAM supported --> 40kB RAM for TPA
 max. 4 drives A: - D: non consecutive
-Boot drive always A:
+Boot drive A: or C:
 

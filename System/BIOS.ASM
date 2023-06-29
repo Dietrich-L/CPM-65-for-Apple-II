@@ -14,8 +14,9 @@
 ;V0.5	15.06.23	single sector R/W
 ;V0.6	19.06.23	save & load ROM page 0 cells
 ;V0.7	20.06.23	CCP at $A800
+;V0.8	21.06.23	minor corrections
 
-VERSION	= $07		;VERSION NUMBER
+VERSION	= $08		;VERSION NUMBER
 
 ;PAGE 00 CELLS
 
@@ -234,23 +235,24 @@ WBOOT	LDA DRIVE		;SELECT DEFAULT DRIVE
 	RTS
 
 
-CONST	STY YBUF
-	ldx motor_countdown	
+CONST	ldx motor_countdown	
 	BEQ CONST3
 CONST1	dec motor_countdown
 	BNE CONST3
 CONST2	ldx DISK_SLOT
 	lda DISK_MOTOROFF,X
-CONST3	ldy #0
-	ldx KBD_READ
+CONST3	lda KBD_READ
 	BPL CONST4
-        dey
-CONST4	tya
-	STA CHARBUF
-	LDY YBUF
-	clc
+	STA KBD_STROBERESET
+        AND #$7F
+	SEC
+CONST5	STA CHARBUF
 	rts
-	
+
+CONST4	LDA #0
+	CLC
+	BEQ CONST5
+
 
 CONIN	STY YBUF	;CHR input; CHR in A, 8 bit transparent
 	PHA
@@ -286,14 +288,7 @@ CONOU4	CMP #CR+$80
 	JSR COUT	;if CR then print CR & US
 	LDA #US+$80
 CONOU3	JSR COUT
-	BIT KBD_READ    ;Check Keyboard Input Reg for a Key Press
-	BPL CHROU1      ;Branch if No Key has been Pressed
-        LDA KBD_READ    ;Read Keyboard Input Reg; Get Key Pressed
-	BIT KBD_STROBERESET	;Clear KBD Strobe (KBD<128) for Next Key
-	CMP #ESC+$80	;CHECK FOR ESC KEY
-	BNE CHROU1
-	LDA #BREAKC	;^C TO CHARACTER BUFFER
-	STA CHARBUF
+	JSR CONST
 CHROU1	PHA
 	JSR SWAP_PZ	;save page 0 cells for ROM
 	PLA
@@ -382,8 +377,9 @@ SWPPZ1	LDX PZ_TAB,Y
 	BPL SWPPZ1
 	RTS
 
-PZ_TAB	DB $20,$21,$22,$23,$24,$25,$28,$29,$2A,$2B
+PZ_TAB	DB $1F,$20,$21,$22,$23,$24,$25,$28,$29,$2A,$2B
 	DB $30,$31,$32,$33,$36,$37,$38,$39,$4E,$4F
+	DB $EA,$EB,$EC,$ED,$EE
 PZ_BUF	DS PZ_BUF-PZ_TAB,$00
 
 ; --- Disk handling --------------------------------------
