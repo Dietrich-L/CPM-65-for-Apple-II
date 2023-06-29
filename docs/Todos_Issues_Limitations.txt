@@ -7,6 +7,7 @@ Issues
 does not check for 80 coloumn card. If not present, system hangs
 Empty discs must be DOS3.3 formatted
 Keyboard input from RDKEY supresses some ASCII codes like ESC, CTRL-A,..
+Disk format not fully CPMTOOLS compatible. Limitation is 8kB file length
 
 
 Limitations
