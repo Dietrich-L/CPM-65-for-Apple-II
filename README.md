@@ -26,8 +26,7 @@ Emulation
 --------------------
 AppleWin emulator, APPLE IIe emulation due to the 80 col card
 
-<br>![CPM-65 Apple II Version](https://github.com/Dietrich-L/CPM-65-for-Apple-II/assets/83355183/92115ec1-b5ee-4b9e-b3e1-6360515362c6)<br>
-&nbsp;System Structure
+![CPM-65 Apple II Version](https://github.com/Dietrich-L/CPM-65/assets/83355183/dfc8af17-442d-441a-96ec-6f0cbbf5ddcf)<br><br>&nbsp; System Structure
 --------------------
 CPM-65 consists of 3 layers:
 - BIOS Basic I/O system - Drives can be A-D non consecutive. 
