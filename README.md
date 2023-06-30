@@ -71,6 +71,15 @@ Software List
             </span></td>
         </tr>
         <tr>
+          <td><span style="font-family: Courier New,Courier,monospace;">BASIC<br>
+            </span></td>
+          <td><span style="font-family: Courier New,Courier,monospace;">1.5<br>
+            </span></td>
+          <td><span style="font-family: Courier New,Courier,monospace;">Microsoft
+              Basic interpreter<br>
+            </span></td>
+        </tr>
+        <tr>
           <td><span style="font-family: Courier New,Courier,monospace;">BDOS<br>
             </span></td>
           <td><span style="font-family: Courier New,Courier,monospace;">2.3*<br>
