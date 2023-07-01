@@ -73,7 +73,7 @@ Software List
         <tr>
           <td><span style="font-family: Courier New,Courier,monospace;">BASIC<br>
             </span></td>
-          <td><span style="font-family: Courier New,Courier,monospace;">1.5<br>
+          <td><span style="font-family: Courier New,Courier,monospace;">1.5*<br>
             </span></td>
           <td><span style="font-family: Courier New,Courier,monospace;">Microsoft
               Basic interpreter<br>
@@ -144,9 +144,10 @@ Software List
         <tr>
           <td><span style="font-family: Courier New,Courier,monospace;">DEBUG<br>
             </span></td>
-          <td><span style="font-family: Courier New,Courier,monospace;"><br>
+          <td><span style="font-family: Courier New,Courier,monospace;">1.7*<br>
             </span></td>
-          <td><span style="font-family: Courier New,Courier,monospace;"><br>
+          <td><span style="font-family: Courier New,Courier,monospace;">Debugger,
+              8 breakpoints, stepping, disassembler,...<br>
             </span></td>
         </tr>
         <tr>
