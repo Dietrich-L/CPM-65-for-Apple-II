@@ -676,6 +676,10 @@ BREAK	LDA _brk_a
 	STA PCH
 ;	TSX
 	LDX _brk_sp
+	INX		;correction for Apple BRK routine
+	INX
+	INX
+	INX
 	STX STACK
 	LDA PNT
 	STA PNTBUF
