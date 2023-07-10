@@ -31,17 +31,16 @@ AppleWin emulator, APPLE IIe emulation due to the 80 col card
 CPM-65 consists of 3 layers:
 - BIOS Basic I/O system - Drives can be A-D non consecutive. 
 - BDOS Basic disc operating system - this is the CPM-65 kernel. Size 2 kB
-- CCP Console command program - a simple console which only allows to invoke CPM-65 programs. <br>    No resident commands. Size 1 kB<br><br>In track 0, sector 0 resides a 256 bytes BOOT program, which loads CPM-65 to memory <br>and starts the CCP. <br><br>The system can boot from Slot# 6 or 5 (Drives A: or C:)<br><br>&nbsp;File &amp; Disc Format
+- CCP Console command program - a simple console which only allows to invoke CPM-65 programs. <br>    No resident commands. Size 1 kB<br><br>In track 0, sector 0 resides a 256 bytes BOOT program, which loads CPM-65 to memory <br>and starts the CCP. <br><br>The system can boot from Slot# 6 or 5 (Drives A: or C:)<br><br><br>&nbsp; File &amp; Disc Format
 ----------------------
 Filenames are CP/M-style d:filename.ext with d &lt;Drive A-H&gt;
 Programs must have .COM as extension and are loaded to $0800 and started there.
 
-The directory structure is nearly CP/M-compatible. <br>Disk images can be read with appropriate tools <br>like CPMTOOLS or CpmtoolsGUI. A disdefs file is in the IMAGES section. <br>Please use an actual version as parameter <span
-style="font-family: Times New Roman,Times,serif;">extentsize 4096 </span>is needed.<br>For the transfer of larger files, see separate documentation.
+The directory structure is nearly CP/M-compatible. <br>Disk images can be read with appropriate tools <br>like CPMTOOLS or CpmtoolsGUI. A disdefs file is in the IMAGES section. <br>Please use an actual version as parameter 'extentsize 4096' is needed.<br>For the transfer of larger files, see separate documentation.
 
 The Disc format is 35 tracks/ 16 sectors/ 256 byte/sector. <br>It is defined in the BIOS. The BDOS operates on sector numbers. 
 
-Software List
+<br>Software List
 </pre>
     <table style="width: 809px;" border="1">
       <tbody>

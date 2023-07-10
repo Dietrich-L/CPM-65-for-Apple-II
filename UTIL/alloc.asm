@@ -112,8 +112,6 @@ SETDRV	LDX	#$0E		;then
 	sta	bitcnt+1
 	ldy	#7		;get size code
 	lda	(dcbpnt),y
-	SEC			;-2
-	SBC #2
 	sta	blkscd		;and save
 	LDY #YBAT
 	LDA (dcbpnt),Y
@@ -191,18 +189,12 @@ DONE1	jsr	sndfre
 	jsr	chrout
 	;now display block size
 	lda	blkscd		;get code
-	BPL	DONE2
-	LDA	#M05K
-	LDY	#M05K/256
-	JSR	msgout
-	JMP	DONE3
-
-DONE2	asl	a		;mult by two
+	asl	a		;mult by two
 	tax			;make index
 	lda	blktbl,x	;get address
 	ldy	blktbl+1,x
 	jsr	msgout		;and send to console
-DONE3	LDA	#CLSMSG		;send
+	LDA	#CLSMSG		;send
 	LDY	#CLSMSG/256	;size
 	jsr	msgout		;to console
 ;now show total block count
@@ -350,14 +342,15 @@ DUMMY	DB '$120957$$$$'
 ;bit mask table
 BITMSK	DB	128,64,32,16,8,4,2,1
 ;block size messages
-M05K	DB	'0.5',EOT
+BLKMS025 DB	'0.25',EOT
+BLKMS05	DB	'0.5',EOT
 blkms0	DB	'1',EOT
 blkms1	DB	'2',EOT
 blkms2	DB	'4',EOT
 blkms3	DB	'8',EOT
 blkms4	DB	'16',EOT
 ;block size message pointers
-blktbl	DW	blkms0,blkms1,blkms2,blkms3,blkms4
+blktbl	DW	BLKMS025,BLKMS05,blkms0,blkms1,blkms2,blkms3,blkms4
 ;opening message
 opnmsg	DB	CR,LF,'CPM-65 DISK ALLOCATION MAP V2.09',CR,LF,CR,LF
 	DB '   01234567890123456789012345678901'
