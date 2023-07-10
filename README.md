@@ -30,13 +30,14 @@ AppleWin emulator, APPLE IIe emulation due to the 80 col card
 --------------------
 CPM-65 consists of 3 layers:
 - BIOS Basic I/O system - Drives can be A-D non consecutive. 
-- BDOS Basic disc operating system - this is the CPM-65 kernal. Size 2 kB
-- CCP Console command program - a simple console which only allows to invoke CPM-65 programs. <br>      No resident commands. Size 1 kB<br><br>In track 0, sector 0 resides a 256 bytes BOOT program, which loads CPM-65 to memory and starts the CCP. <br>The system can boot from Slot# 6 or 5 (Drives A: or C:)<br><br>&nbsp;File &amp; Disc Format
+- BDOS Basic disc operating system - this is the CPM-65 kernel. Size 2 kB
+- CCP Console command program - a simple console which only allows to invoke CPM-65 programs. <br>    No resident commands. Size 1 kB<br><br>In track 0, sector 0 resides a 256 bytes BOOT program, which loads CPM-65 to memory <br>and starts the CCP. <br><br>The system can boot from Slot# 6 or 5 (Drives A: or C:)<br><br>&nbsp;File &amp; Disc Format
 ----------------------
 Filenames are CP/M-style d:filename.ext with d &lt;Drive A-H&gt;
 Programs must have .COM as extension and are loaded to $0800 and started there.
 
-The directory structure is nearly CP/M-compatible. Disk images can be read with appropriate  tools <br>like CPMTOOLS or CpmtoolsGUI. A disdefs file is in the IMAGES section. However due to an inconsistency <br>in the file system implementation of these tools max. 8 kB files can be written this way. <br>For the transfer of larger files, see separate documentation.
+The directory structure is nearly CP/M-compatible. <br>Disk images can be read with appropriate tools <br>like CPMTOOLS or CpmtoolsGUI. A disdefs file is in the IMAGES section. <br>Please use an actual version as parameter <span
+style="font-family: Times New Roman,Times,serif;">extentsize 4096 </span>is needed.<br>For the transfer of larger files, see separate documentation.
 
 The Disc format is 35 tracks/ 16 sectors/ 256 byte/sector. <br>It is defined in the BIOS. The BDOS operates on sector numbers. 
 
@@ -178,11 +179,12 @@ Software List
             </span></td>
         </tr>
         <tr>
-          <td><span style="font-family: Courier New,Courier,monospace;">FORMAT<br>
+          <td><span style="font-family: Courier New,Courier,monospace;">FDISK<br>
             </span></td>
-          <td><span style="font-family: Courier New,Courier,monospace;"><br>
+          <td><span style="font-family: Courier New,Courier,monospace;">1.0*<br>
             </span></td>
-          <td><span style="font-family: Courier New,Courier,monospace;"><br>
+          <td><span style="font-family: Courier New,Courier,monospace;">Converts
+              a DOS 3.3 disc to a bootable CPM-65 disc<br>
             </span></td>
         </tr>
         <tr>
@@ -191,7 +193,7 @@ Software List
           <td><span style="font-family: Courier New,Courier,monospace;">1.6*<br>
             </span></td>
           <td><span style="font-family: Courier New,Courier,monospace;">FIG
-              FORTH including mudule for standalone applications<br>
+              FORTH including module for standalone applications<br>
             </span></td>
         </tr>
         <tr>
@@ -252,9 +254,8 @@ Errors
 --------------------
 The Apple port of CPM-65 is currently work in progress. Expect errors and crashes.
 
-The CPM-65 system itself has now seen more than 30 years of service. Currently there are no known errors. 
-
-However, since an error free software does not exist, please report any errors in the ISSUE section
+The CPM-65 system itself has now seen more than 30 years of service. <br>Currently there are no known errors. 
+However, since an error free software does not exist, <br>please report any errors in the ISSUE section
 
 Other related systems
 ---------------------

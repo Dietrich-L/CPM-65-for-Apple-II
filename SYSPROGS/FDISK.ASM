@@ -459,7 +459,7 @@ STARTM	DB CLS
 	DB 'FDISK V',VERSION/16+$30,'.',VERSION*$1000/$1000+$30
 	DB '			(c) D. Lausberg	2023'
 	DB CR,LF,CR,LF,EOT
-XCHGM	DB CR,LF,'Insert DOS3.3 Disk in Drive '
+XCHGM	DB CR,LF,'Insert DOS 3.3 Disk in Drive '
 DRVCHR	DB 'B: '
 	DB CR,LF,'and press any key'
 	DB CR,LF,CR,LF

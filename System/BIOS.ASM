@@ -15,8 +15,9 @@
 ;V0.6	19.06.23	save & load ROM page 0 cells
 ;V0.7	20.06.23	CCP at $A800
 ;V0.8	21.06.23	minor corrections
+;V1.0	09.07.23	new CPM-compatible file system
 
-VERSION	= $08		;VERSION NUMBER
+VERSION	= $10		;VERSION NUMBER
 
 ;PAGE 00 CELLS
 
@@ -67,8 +68,8 @@ MAXTRK	= 35		;MAX TRACKS
 
 SPT	= 16		;SECTORS PER TRACK
 SPTDIV	= 4		;log(2) SPT
-SPB	= 4		;SECTORS PER BLOCK
-SPBDIV	= 2		;LOG(2) SPB
+SPB	= 2		;SECTORS PER BLOCK
+SPBDIV	= 1		;LOG(2) SPB
 SYS	= 32		;SYSTEM sectors
 BPD	= MAXTRK*SPT-SYS/SPB-1	;BLOCKS PER DISK
 DIRSCS	= 16		;DIRECTORY SECTORS
@@ -114,7 +115,6 @@ DISK_WRITE    = $c08f
 DECODE_TABLE_START = $96
 
 disk_sixes_buffer = $300
-track_buffer = $B000
 
 ;--- BIOS code ---
 
@@ -178,8 +178,8 @@ DPHA	DW DIRBF	;DISK PARAMETER HEADER
 	DB SYS,0,0
 	DB BATSIZ
 
-BAT	DB %10000000	;Block Allocation Table Drive A-D
-	DS BATSIZ+1,0	;17 Bytes
+BAT	DB DIRMSK	;Block Allocation Table Drive A-D
+	DS BATSIZ+1,0	;35 Bytes
 
 ;--- SLOT TABLE Floppy Drives ---
 
@@ -211,21 +211,24 @@ CHR	DB 0
 
 ;==================================
 
-BOOT	LDA #$4C		;SET JMP BDOS
-	STA JPBDOS
-	LDA #CCP
-	STA JPBDOS+1
-	LDA #CCP/256
-	STA JPBDOS+2
-	LDA DRIVE		;set actual drive
-	LDX #$0E		;VIA BDOS
-	JSR JPBDOS
+BOOT	LDA JPBDOS
+	CMP #$4C		;was BIOS already active?
+	BEQ BOOT1
 	LDY #PZ_BUF-PZ_TAB-1	;save page 0 cells
 STOPZ1	LDX PZ_TAB,Y
 	LDA 0,X
 	STA PZ_BUF,Y
 	DEY
 	BPL STOPZ1
+	LDA #$4C		;SET JMP BDOS
+	STA JPBDOS
+BOOT1	LDA #CCP
+	STA JPBDOS+1
+	LDA #CCP/256
+	STA JPBDOS+2
+	LDA DRIVE		;set actual drive
+	LDX #$0E		;VIA BDOS
+	JSR JPBDOS
 	LDX #0 			;WARM BOOT
 	JMP JPBDOS
 
