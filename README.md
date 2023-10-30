@@ -66,7 +66,7 @@ The Disc format is 35 tracks/ 16 sectors/ 256 byte/sector. <br>It is defined in 
         <tr>
           <td><span style="font-family: Courier New,Courier,monospace;">ASM<br>
             </span></td>
-          <td><span style="font-family: Courier New,Courier,monospace;">2.7*<br>
+          <td><span style="font-family: Courier New,Courier,monospace;">2.8*<br>
             </span></td>
           <td><span style="font-family: Courier New,Courier,monospace;">native
               6502 Assembler<br>
@@ -137,7 +137,7 @@ The Disc format is 35 tracks/ 16 sectors/ 256 byte/sector. <br>It is defined in 
         <tr>
           <td><span style="font-family: Courier New,Courier,monospace;">D<br>
             </span></td>
-          <td><span style="font-family: Courier New,Courier,monospace;">2.1*<br>
+          <td><span style="font-family: Courier New,Courier,monospace;">2.2*<br>
             </span></td>
           <td><span style="font-family: Courier New,Courier,monospace;">show
               directory alphabetically sorted<br>
