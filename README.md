@@ -57,7 +57,7 @@ The Disc format is 35 tracks/ 16 sectors/ 256 byte/sector. <br>It is defined in 
         <tr>
           <td><span style="font-family: Courier New,Courier,monospace;">ALLOC<br>
             </span></td>
-          <td><span style="font-family: Courier New,Courier,monospace;">2.9*<br>
+          <td><span style="font-family: Courier New,Courier,monospace;">2.9<br>
             </span></td>
           <td><span style="font-family: Courier New,Courier,monospace;">shows
               disc allocation map<br>
@@ -66,7 +66,7 @@ The Disc format is 35 tracks/ 16 sectors/ 256 byte/sector. <br>It is defined in 
         <tr>
           <td><span style="font-family: Courier New,Courier,monospace;">ASM<br>
             </span></td>
-          <td><span style="font-family: Courier New,Courier,monospace;">2.8*<br>
+          <td><span style="font-family: Courier New,Courier,monospace;">2.8<br>
             </span></td>
           <td><span style="font-family: Courier New,Courier,monospace;">native
               6502 Assembler<br>
@@ -75,7 +75,7 @@ The Disc format is 35 tracks/ 16 sectors/ 256 byte/sector. <br>It is defined in 
         <tr>
           <td><span style="font-family: Courier New,Courier,monospace;">BASIC<br>
             </span></td>
-          <td><span style="font-family: Courier New,Courier,monospace;">1.5*<br>
+          <td><span style="font-family: Courier New,Courier,monospace;">1.5<br>
             </span></td>
           <td><span style="font-family: Courier New,Courier,monospace;">Microsoft
               Basic interpreter<br>
@@ -84,7 +84,7 @@ The Disc format is 35 tracks/ 16 sectors/ 256 byte/sector. <br>It is defined in 
         <tr>
           <td><span style="font-family: Courier New,Courier,monospace;">BDOS<br>
             </span></td>
-          <td><span style="font-family: Courier New,Courier,monospace;">2.3*<br>
+          <td><span style="font-family: Courier New,Courier,monospace;">2.4<br>
             </span></td>
           <td><span style="font-family: Courier New,Courier,monospace;">CPM-65
               BDOS<br>
@@ -93,7 +93,7 @@ The Disc format is 35 tracks/ 16 sectors/ 256 byte/sector. <br>It is defined in 
         <tr>
           <td><span style="font-family: Courier New,Courier,monospace;">BIOS<br>
             </span></td>
-          <td><span style="font-family: Courier New,Courier,monospace;">0.7*<br>
+          <td><span style="font-family: Courier New,Courier,monospace;">0.7<br>
             </span></td>
           <td><span style="font-family: Courier New,Courier,monospace;">APPLE II
               CPM-65 BIOS</span></td>
@@ -101,7 +101,7 @@ The Disc format is 35 tracks/ 16 sectors/ 256 byte/sector. <br>It is defined in 
         <tr>
           <td><span style="font-family: Courier New,Courier,monospace;">BOOT<br>
             </span></td>
-          <td><span style="font-family: Courier New,Courier,monospace;">0.4*<br>
+          <td><span style="font-family: Courier New,Courier,monospace;">0.4<br>
             </span></td>
           <td><span style="font-family: Courier New,Courier,monospace;">APPLE II
               CPM-65 BOOT program in track 0, sector 0<br>
@@ -110,7 +110,7 @@ The Disc format is 35 tracks/ 16 sectors/ 256 byte/sector. <br>It is defined in 
         <tr>
           <td><span style="font-family: Courier New,Courier,monospace;">BROWSE<br>
             </span></td>
-          <td><span style="font-family: Courier New,Courier,monospace;">1.2*<br>
+          <td><span style="font-family: Courier New,Courier,monospace;">1.2<br>
             </span></td>
           <td><span style="font-family: Courier New,Courier,monospace;">text
               file browser<br>
@@ -119,7 +119,7 @@ The Disc format is 35 tracks/ 16 sectors/ 256 byte/sector. <br>It is defined in 
         <tr>
           <td><span style="font-family: Courier New,Courier,monospace;">CCP<br>
             </span></td>
-          <td><span style="font-family: Courier New,Courier,monospace;">1.5*<br>
+          <td><span style="font-family: Courier New,Courier,monospace;">1.5<br>
             </span></td>
           <td><span style="font-family: Courier New,Courier,monospace;">CPM-65
               CCP<br>
@@ -128,7 +128,7 @@ The Disc format is 35 tracks/ 16 sectors/ 256 byte/sector. <br>It is defined in 
         <tr>
           <td><span style="font-family: Courier New,Courier,monospace;">COPY<br>
             </span></td>
-          <td><span style="font-family: Courier New,Courier,monospace;">1.4*<br>
+          <td><span style="font-family: Courier New,Courier,monospace;">1.4<br>
             </span></td>
           <td><span style="font-family: Courier New,Courier,monospace;">multi
               file copy utility<br>
@@ -137,7 +137,7 @@ The Disc format is 35 tracks/ 16 sectors/ 256 byte/sector. <br>It is defined in 
         <tr>
           <td><span style="font-family: Courier New,Courier,monospace;">D<br>
             </span></td>
-          <td><span style="font-family: Courier New,Courier,monospace;">2.2*<br>
+          <td><span style="font-family: Courier New,Courier,monospace;">2.2<br>
             </span></td>
           <td><span style="font-family: Courier New,Courier,monospace;">show
               directory alphabetically sorted<br>
@@ -146,7 +146,7 @@ The Disc format is 35 tracks/ 16 sectors/ 256 byte/sector. <br>It is defined in 
         <tr>
           <td><span style="font-family: Courier New,Courier,monospace;">DEBUG<br>
             </span></td>
-          <td><span style="font-family: Courier New,Courier,monospace;">1.8*<br>
+          <td><span style="font-family: Courier New,Courier,monospace;">1.8<br>
             </span></td>
           <td><span style="font-family: Courier New,Courier,monospace;">Debugger,
               8 breakpoints, stepping, disassembler,...<br>
@@ -155,7 +155,7 @@ The Disc format is 35 tracks/ 16 sectors/ 256 byte/sector. <br>It is defined in 
         <tr>
           <td><span style="font-family: Courier New,Courier,monospace;">DUTIL<br>
             </span></td>
-          <td><span style="font-family: Courier New,Courier,monospace;">1.5*<br>
+          <td><span style="font-family: Courier New,Courier,monospace;">1.5<br>
             </span></td>
           <td><span style="font-family: Courier New,Courier,monospace;">disc
               sector editor<br>
@@ -164,7 +164,7 @@ The Disc format is 35 tracks/ 16 sectors/ 256 byte/sector. <br>It is defined in 
         <tr>
           <td style="height: 28.8167px;"><span style="font-family: Courier New,Courier,monospace;">EDIT<br>
             </span></td>
-          <td><span style="font-family: Courier New,Courier,monospace;">1.1*<br>
+          <td><span style="font-family: Courier New,Courier,monospace;">1.1<br>
             </span></td>
           <td><span style="font-family: Courier New,Courier,monospace;">Simple
               editor for text files &amp; FORTH screens<br>
@@ -173,7 +173,7 @@ The Disc format is 35 tracks/ 16 sectors/ 256 byte/sector. <br>It is defined in 
         <tr>
           <td><span style="font-family: Courier New,Courier,monospace;">ERASE<br>
             </span></td>
-          <td><span style="font-family: Courier New,Courier,monospace;">1.5*<br>
+          <td><span style="font-family: Courier New,Courier,monospace;">1.5<br>
             </span></td>
           <td><span style="font-family: Courier New,Courier,monospace;">erase
               files<br>
@@ -182,7 +182,7 @@ The Disc format is 35 tracks/ 16 sectors/ 256 byte/sector. <br>It is defined in 
         <tr>
           <td><span style="font-family: Courier New,Courier,monospace;">FDISK<br>
             </span></td>
-          <td><span style="font-family: Courier New,Courier,monospace;">1.0*<br>
+          <td><span style="font-family: Courier New,Courier,monospace;">1.0<br>
             </span></td>
           <td><span style="font-family: Courier New,Courier,monospace;">Converts
               a DOS 3.3 disc to a bootable CPM-65 disc<br>
@@ -191,7 +191,7 @@ The Disc format is 35 tracks/ 16 sectors/ 256 byte/sector. <br>It is defined in 
         <tr>
           <td><span style="font-family: Courier New,Courier,monospace;">FORTH<br>
             </span></td>
-          <td><span style="font-family: Courier New,Courier,monospace;">1.6*<br>
+          <td><span style="font-family: Courier New,Courier,monospace;">1.6<br>
             </span></td>
           <td><span style="font-family: Courier New,Courier,monospace;">FIG
               FORTH including module for standalone applications<br>
@@ -200,7 +200,7 @@ The Disc format is 35 tracks/ 16 sectors/ 256 byte/sector. <br>It is defined in 
         <tr>
           <td><span style="font-family: Courier New,Courier,monospace;">RENAME<br>
             </span></td>
-          <td><span style="font-family: Courier New,Courier,monospace;">1.1*<br>
+          <td><span style="font-family: Courier New,Courier,monospace;">1.1<br>
             </span></td>
           <td><span style="font-family: Courier New,Courier,monospace;">rename
               files<br>
@@ -209,7 +209,7 @@ The Disc format is 35 tracks/ 16 sectors/ 256 byte/sector. <br>It is defined in 
         <tr>
           <td><span style="font-family: Courier New,Courier,monospace;">SYS<br>
             </span></td>
-          <td><span style="font-family: Courier New,Courier,monospace;">1.6*<br>
+          <td><span style="font-family: Courier New,Courier,monospace;">1.6<br>
             </span></td>
           <td><span style="font-family: Courier New,Courier,monospace;">puts
               code for BOOT, BIOS, BDOS, CCP into the system tracks<br>
@@ -218,7 +218,7 @@ The Disc format is 35 tracks/ 16 sectors/ 256 byte/sector. <br>It is defined in 
         <tr>
           <td><span style="font-family: Courier New,Courier,monospace;">SYSGEN<br>
             </span></td>
-          <td><span style="font-family: Courier New,Courier,monospace;">1.0*<br>
+          <td><span style="font-family: Courier New,Courier,monospace;">1.0<br>
             </span></td>
           <td><span style="font-family: Courier New,Courier,monospace;">copy
               operating system to another disc<br>
@@ -227,7 +227,7 @@ The Disc format is 35 tracks/ 16 sectors/ 256 byte/sector. <br>It is defined in 
         <tr>
           <td><span style="font-family: Courier New,Courier,monospace;">TYPE<br>
             </span></td>
-          <td><span style="font-family: Courier New,Courier,monospace;">1.6*<br>
+          <td><span style="font-family: Courier New,Courier,monospace;">1.6<br>
             </span></td>
           <td><span style="font-family: Courier New,Courier,monospace;">prints
               text file to screen<br>
@@ -243,8 +243,7 @@ The Disc format is 35 tracks/ 16 sectors/ 256 byte/sector. <br>It is defined in 
         </tr>
       </tbody>
     </table>
-    <pre>*available
-
+    <pre>
 All software is supplied as assembler files to be assembled with the CPM-65 assembler. <br>In case you wish to use a different assembler, the syntax has to be adapted accordingly.
 
 Documentation
