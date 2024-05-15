@@ -7,6 +7,8 @@
 
 ;V1.0	23.03.96
 ;V1.1	29.04.21	4 Floppies, extensions corrected
+;V1.2	03.11.23	error in INIT corrected
+VERSION	= $12
 
 ;Parameters
 
@@ -24,7 +26,7 @@ BUFPNT	= $11		;FILENAME BUFFER POINTER
 
 R_FNAME	= $13		;new filename buffer
 
-CCPV	= $DE
+CCPV	= $E0
 BDOS	= $F0
 FCB1	= $F6
 FCB2	= $F4
@@ -108,10 +110,9 @@ RENAM3	LDY #0
 	LDA BUFPNT		;BUFPNT=BUFPNT+11
 	ADC #11
 	STA BUFPNT
-	LDA BUFPNT+1
-	ADC #0
-	STA BUFPNT+1
-	LDX #REN
+	BCC RENAM4
+	INC BUFPNT+1
+RENAM4	LDX #REN
 	JSR BDOS
 	BCS RENAMX
 	DEC F_CNT
@@ -150,10 +151,12 @@ INIT6	STA SDRIVE		;SAVE SOURCE DRIVE
 	LDA (FCB2),Y		;CHECK FOR DESTINATION DRIVE
 	BEQ INIT7
 	TAX
-	INX
+	DEX
 	CPX SDRIVE		;must be equal
 	BNE INIT1
 INIT7	LDY #0
+	TYA			;set drive in FCB2 = 0
+	STA (FCB2),Y
 	LDA (DMA),Y		;CHECK FOR SWITCH
 	CMP #$01
 	BEQ INIT8
@@ -492,6 +495,7 @@ ERRTAB  DB $FD,$81,'Drive not ready',EOT
 	DB $00
 
 ;-----	TABLES  --------------------------------
+		;this comment is supposed to sufficiently increase file length
 
 SWTAB	DB 'Y',$80,'y',$80
 SWTABX
@@ -502,8 +506,9 @@ MESS1	DB ' --> ',EOT
 MESSAGE
 	DB '  (^C=abort, E=Exit) Y/N  ',EOT
 
-STARTM	DB CR,LF,CR,LF,'RENAME V1.1                '
-	DB '  (c) D.Lausberg   1996',CR,LF,EOT
+STARTM	DB CR,LF,CR,LF,'RENAME '
+	DB ' V',VERSION/16+$30,'.',VERSION*$1000/$1000+$30
+	DB '                  (c) D.Lausberg   1996',CR,LF,EOT
 ENDM	DB CR,LF,CR,LF,'RENAME finished',CR,LF,EOT
 SOURCE	DB CR,LF,'Insert',EOT
 XCHGM	DB ' disc to drive '
@@ -514,3 +519,5 @@ CRLFM	DB CR,LF,EOT
 BUFFER
 
 	END
+
+
