@@ -83,7 +83,7 @@ The Disc format is 35 tracks/ 16 sectors/ 256 byte/sector. <br>It is defined in 
         <tr>
           <td><span style="font-family: Courier New,Courier,monospace;">BDOS<br>
             </span></td>
-          <td><span style="font-family: Courier New,Courier,monospace;">2.4<br>
+          <td><span style="font-family: Courier New,Courier,monospace;">2.5<br>
             </span></td>
           <td><span style="font-family: Courier New,Courier,monospace;">CPM-65
               BDOS<br>
@@ -92,7 +92,7 @@ The Disc format is 35 tracks/ 16 sectors/ 256 byte/sector. <br>It is defined in 
         <tr>
           <td><span style="font-family: Courier New,Courier,monospace;">BIOS<br>
             </span></td>
-          <td><span style="font-family: Courier New,Courier,monospace;">0.7<br>
+          <td><span style="font-family: Courier New,Courier,monospace;">1.0<br>
             </span></td>
           <td><span style="font-family: Courier New,Courier,monospace;">APPLE II
               CPM-65 BIOS</span></td>
@@ -233,11 +233,11 @@ The Disc format is 35 tracks/ 16 sectors/ 256 byte/sector. <br>It is defined in 
             </span></td>
         </tr>
         <tr>
-          <td><span style="font-family: Courier New,Courier,monospace;"><br>
+          <td><span style="font-family: Courier New,Courier,monospace;">SYSINFO<br>
             </span></td>
-          <td><span style="font-family: Courier New,Courier,monospace;"><br>
+          <td><span style="font-family: Courier New,Courier,monospace;">1.0<br>
             </span></td>
-          <td><span style="font-family: Courier New,Courier,monospace;"><br>
+          <td><span style="font-family: Courier New,Courier,monospace;">display system information<br>
             </span></td>
         </tr>
       </tbody>
