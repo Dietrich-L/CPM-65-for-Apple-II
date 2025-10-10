@@ -2,8 +2,9 @@
 ;BY D. LAUSBERG	 (C)2022
 ;V1.0	06.12.22
 ;V1.1	28.06.23	correct error message when deleting chr at pos 0
+;V1.3	07.10.25	writes now the last block with spaces
 
-VERSION	= $11
+VERSION	= $13
 
 ;SYSTEM CONSTANTS
 
@@ -11,7 +12,7 @@ DMA	= $FE
 FCB1	= $F6
 BDOS	= $F0
 INBUF	= $EC
-CCPV	= $DE
+CCPV	= $E0
 TPA	= $0800
 
 ;Page 0 cells
@@ -39,6 +40,7 @@ ABUF	= $16		;temp buffer
 XBUF	= $17
 ERRNO	= $18
 ERRCNT	= $19		;error counter for RDFILE
+CNT	= $1A		;counter
 
 ;BDOS COMMANDS
 
@@ -266,7 +268,7 @@ CURUP	JSR DECLINE	;cursor up
 	SBC LINE+1
 	BCS CURUP2	;if yes -> update screen
 	JSR LIN12LINE
-	JMP UPDSCR
+CURUP3	JMP UPDSCR
 
 CURUP2	JSR LIN12LINE
 	JSR OUTVT
@@ -277,6 +279,8 @@ CURUP1	CLC
 CURDN	JSR INCLINE	;cursor down
 	BCS CURDN1
 	JSR LIN12L
+	JSR Q1LIN	;1. line of next screen reached?
+	BCC CURUP3	;then show next screen
 	JSR OUTLF
 CURDN1	CLC
 	RTS
@@ -302,9 +306,9 @@ PAGEDN1	CLC		;do nothing
 	RTS
 
 
-RETURN	BIT MODE	;do CR
+RETURN	JSR CURZERO	;set cursor to col 0
+	BIT MODE	;do CR
 	BMI RET1	;if OW mode
-	JSR CURZERO	;set cursor to col 0
 	JSR INCLINE	;inc LINE result in LIN1
 	BCC RET2	;if new line
 	JSR ILINE	;insert it
@@ -318,27 +322,34 @@ RET2	JSR LIN12LINE
 	CLC
 RETX	RTS
 
-RET1	JSR CURZERO	;INS mode
-	JSR ILINE
+RET1	JSR ILINE	;INS mode
 	BCS RETX
 	JSR LINE2LIN1
 	JSR CLRLINE
 	JSR SETLC
-	JSR P2EOL	;print complete line
-	JSR OUTLF
 	LDA LINE
 	PHA
 	LDA LINE+1
 	PHA
+	LDA #0		;set line cnt = 0
+	STA CNT
+RET4	JSR SETLC	;print rest of page
+	JSR P2EOL	;print complete line
 	JSR INCLINE
 	JSR LIN12L
-	JSR SETLC
-	JSR P2EOL	;print complete line
+	JSR Q1LIN	;1. line of next page reached?
+	BCC RET3
+	JSR OUTLF
+	INC CNT
+	BNE RET4
+
+RET3	JSR OUTVT	;move cursor to inserted line
+	DEC CNT
+	BNE RET3
 	PLA
 	STA LINE+1
 	PLA
 	STA LINE
-	JSR OUTVT
 	RTS
 
 
@@ -602,7 +613,7 @@ WAITKEY	LDA #$FF
 GETCHR	LDA #$FF		;get chr from TTY
 	LDX #CONIO
 	JSR BDOS
-TSTCHR	CMP #$1F
+TSTCHR	CMP #$20
 	BCS GETCHR1
 	SEC		;CTRL code
 	RTS
@@ -731,7 +742,11 @@ DECTEN1	SEC
 	RTS	
 	
 
-ILINE	LDA #LLEN+1	;insert line at LINE
+ILINE	LDA TXTEND	;insert line at LINE
+	STA SA
+	LDA TXTEND+1	;SA = old TXTEND
+	STA SA+1
+	LDA #LLEN+1
 	LDY #0
 	JSR INCTEND	;inc TXTEND
 	BCS ILINEX
@@ -739,43 +754,42 @@ ILINE	LDA #LLEN+1	;insert line at LINE
 	STA TA
 	LDA TXTEND+1
 	STA TA+1
-	LDA LINE	;set SA = LINE
-	STA SA
-	LDA LINE+1
-	STA SA+1
-	LDA #LLEN+1
-	LDY #0
+	SEC
+	LDA SA		;PNT = SA - LINE
+	SBC LINE
+	STA PNT
+ 	LDA SA+1
+	SBC LINE+1
+	STA PNT+1
+	BCC ILINE1
 	JSR MOVUP
 	CLC
 ILINEX	RTS
 
-	
-MOVUP	SEC		;move mem from SA to TA by A/Y L/H
-	STA PNT
-	STY PNT+1
-	LDA TA
-	SBC PNT
-	STA PNT
-	LDA TA+1
-	SBC PNT+1
-	STA PNT+1
-	LDY #0
-MOVUP1	LDA (PNT),Y	;move it
-	STA (TA),Y
-	LDA PNT+1
-	CMP SA+1
-	BNE MOVUP2
-	LDA PNT
-	CMP SA
-	BEQ MOVUPX	;SA reached?
-MOVUP2	DEC PNT
-	BNE MOVUP3
-	DEC PNT+1
-MOVUP3	DEC TA		;dec TA
-	BNE MOVUP1
-	DEC TA+1
-MOVUP4	BNE MOVUP1
+ILINE1	LDA #MEMOVL
+	SEC
+	RTS
 
+	
+MOVUP	LDY #0		;move PNT bytes from SA to TA
+MOVUP1	LDA (SA),Y	;move it
+	STA (TA),Y
+	LDA SA		;dec SA
+	BNE MOVUP2
+	DEC SA+1
+MOVUP2	DEC SA
+	LDA TA		;dec TA
+	BNE MOVUP3
+	DEC TA+1
+MOVUP3	DEC TA
+	LDA PNT
+	BNE MOVUP4
+	DEC PNT+1
+MOVUP4	DEC PNT		;dec PNT
+	LDA PNT+1
+	CMP #$FF	;finished?
+	BNE MOVUP1
+	CLC
 MOVUPX	RTS
 
 
@@ -821,9 +835,27 @@ F1LIN	SEC		;find 1. line of actual screen
 	AND #%11111100	;modulo $3ff = 16 lps
 	CLC
 	ADC #BUFFER/256
-	STA LINE+1
+	STA LINE+1	;set LINE to 1. line
 	LDA #BUFFER
 	STA LINE
+	RTS
+
+
+Q1LIN	SEC		;is LINE the 1. line of actual screen
+	LDA LINE
+	SBC #BUFFER
+	TAY
+	LDA LINE+1
+	SBC #BUFFER/256
+	AND #%00000011	;modulo $3ff = 16 lps
+	BNE Q1LIN1
+	TYA
+	AND #%11000000
+	BNE Q1LIN1
+	CLC		;C=0 yes it is the 1. line
+	RTS
+
+Q1LIN1	SEC		;C=1 no, its another line
 	RTS
 
 
@@ -1010,16 +1042,26 @@ FWRITA	JSR WCHR	;FORTH file
 	STA PNT
 	BEQ FWRITA
 
-FWRIT8	LDA PNT+1	;check last record not written
-	BEQ FWRIT9
-	TAY
-	LDA #SP
+FWRIT8	LDY PNT+1	;check last record not written
+	BEQ FWRIT9	;finish writing 
+FWRITB	LDA #SP
 FWRIT7	STA (DMA),Y	;fill rest of page with SPs
 	INY
 	BNE FWRIT7
-	LDX #WRITE	;write last record
+	LDX #WRITE	;write additional record
 	JSR BDOS
 	BCS FWRITX
+	BIT MODE	;is it a TXT file?
+	BVC FWRIT9	;if no then
+	INC LIN1+1
+	SEC
+	LDA LIN1+1	;write full 1k block with SPs
+	SBC #BUFFER/256
+	AND #%00000011	;check for last page in block
+	BEQ FWRIT9
+	LDY #0
+	BEQ FWRITB
+
 FWRIT9	LDX #CLOSE	;close file
 	JSR BDOS
 	BCS FWRITX
